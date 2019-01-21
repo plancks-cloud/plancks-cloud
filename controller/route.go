@@ -5,3 +5,7 @@ import "github.com/just1689/plancks-cloud/model"
 func GetAllRoutes() *[]model.Route {
 
 }
+
+func SaveAllRoutes(sl *[]model.Route) {
+
+}
