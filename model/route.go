@@ -1,7 +1,7 @@
 package model
 
-type InternalRoute struct {
-	ID          string `json:"id"`
-	ServiceName string `json:"serviceName"`
-	DomainName  string `json:"domainName"`
+type Route struct {
+	ID         string `json:"id"`
+	DomainName string `json:"domainName"`
+	Address    string `json:"address"`
 }
