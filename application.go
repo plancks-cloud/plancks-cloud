@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/just1689/plancks-cloud/io/http-admin"
+	"github.com/plancks-cloud/plancks-cloud/io/http-admin"
 	"log"
 )
 

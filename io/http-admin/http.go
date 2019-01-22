@@ -3,8 +3,8 @@ package http_admin
 import (
 	"encoding/json"
 	"flag"
-	"github.com/just1689/plancks-cloud/controller"
-	"github.com/just1689/plancks-cloud/model"
+	"github.com/plancks-cloud/plancks-cloud/controller"
+	"github.com/plancks-cloud/plancks-cloud/model"
 	"log"
 	"net/http"
 
