@@ -3,6 +3,7 @@ package http_admin
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
 	"github.com/plancks-cloud/plancks-cloud/controller"
 	"github.com/plancks-cloud/plancks-cloud/model"
 	"log"
@@ -43,14 +44,17 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 
 func handleService(method string, body []byte, ctx *fasthttp.RequestCtx) {
 	if method == http.MethodPost || method == http.MethodPut {
-		var item *model.Service
+		var item = &model.Service{}
+		fmt.Println(string(body))
 		err := json.Unmarshal(body, item)
 		if err != nil {
-			//TODO: Return err
+			fmt.Println(err)
+			return
 		}
 		err = controller.Upsert(item)
 		if err != nil {
-			//TODO: Return err
+			fmt.Println(err)
+			return
 		}
 		ctx.Response.SetStatusCode(http.StatusOK)
 		ctx.Response.SetBody(model.OKMessage)

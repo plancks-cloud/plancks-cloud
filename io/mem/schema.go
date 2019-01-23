@@ -6,8 +6,8 @@ var (
 	// Create the DB schema
 	schema = &memdb.DBSchema{
 		Tables: map[string]*memdb.TableSchema{
-			"services": {
-				Name: "services",
+			"Service": {
+				Name: "Service",
 				Indexes: map[string]*memdb.IndexSchema{
 					"id": {
 						Name:    "id",
@@ -16,8 +16,8 @@ var (
 					},
 				},
 			},
-			"routes": {
-				Name: "routes",
+			"Route": {
+				Name: "Route",
 				Indexes: map[string]*memdb.IndexSchema{
 					"id": {
 						Name:    "id",

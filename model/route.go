@@ -1,6 +1,6 @@
 package model
 
-const RouteCollectionName = "routes"
+const RouteCollectionName = "Route"
 
 type Route struct {
 	ID         string `json:"id"`

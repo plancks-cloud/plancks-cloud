@@ -1,6 +1,6 @@
 package model
 
-const ServiceCollectionName = "services"
+const ServiceCollectionName = "Service"
 
 type Service struct {
 	ID    string `json:"id"`
