@@ -18,8 +18,7 @@ var (
 
 func Startup() {
 	flag.Parse()
-	h := requestHandler
-	if err := fasthttp.ListenAndServe(*addr, h); err != nil {
+	if err := fasthttp.ListenAndServe(*addr, requestHandler); err != nil {
 		log.Fatalf("Error in ListenAndServe: %s", err)
 	}
 }

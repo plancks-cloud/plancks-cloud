@@ -3,27 +3,28 @@ package http_router
 //Taken from from https://gist.github.com/bradfitz/1d7bdf12278d4d713212ce6c74875dab
 
 import (
-	"crypto/tls"
 	"fmt"
 	"io"
 	"log"
 	"net"
 	"net/http"
-	"strings"
+	"net/http/httputil"
+	"net/url"
+	"time"
 )
 
 var (
-	hostPorts = []string{":10800"}
-	base      = Base{":8080"}
+	target   = "http://127.0.0.1:8000"
+	targetWS = "127.0.0.1:8000"
 )
-
-type Base struct {
-	Host string
-}
 
 func Proxy() {
 
-	tlsConfig := &tls.Config{}
+	u, err := url.Parse(target)
+	if err != nil {
+		fmt.Println(err)
+	}
+	rp := httputil.NewSingleHostReverseProxy(u)
 
 	httpsServer := &http.Server{
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -38,20 +39,8 @@ func Proxy() {
 				defer c.Close()
 
 				var be net.Conn
-				if len(hostPorts) == 0 {
-					backendHostPort := base.Host
-					if !strings.Contains(backendHostPort, ":") {
-						backendHostPort = net.JoinHostPort(backendHostPort, "443")
-					}
-					be, err = tls.DialWithDialer(dialer, "tcp", backendHostPort, tlsConfig)
-				} else {
-					for _, hostPort := range hostPorts {
-						be, err = tls.DialWithDialer(dialer, "tcp", hostPort, tlsConfig)
-						if err == nil {
-							break
-						}
-					}
-				}
+				be, err = net.DialTimeout("tcp", targetWS, 10*time.Second)
+
 				if err != nil {
 					log.Printf("websocket Dial: %v", err)
 					http.Error(w, err.Error(), 500)
@@ -87,6 +76,6 @@ func Proxy() {
 		}),
 	}
 
-	httpsServer.ListenAndServe()
+	panic(httpsServer.ListenAndServe())
 
 }
