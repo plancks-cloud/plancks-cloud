@@ -47,12 +47,26 @@ func handleService(method string, body []byte, ctx *fasthttp.RequestCtx) {
 	if err != nil {
 		//TODO: Return err
 	}
-	controller.AddService(item)
+	err = controller.Upsert(item)
+	if err != nil {
+		//TODO: Return err
+	}
 	ctx.Response.SetStatusCode(http.StatusOK)
 	ctx.Response.SetBody(model.OKMessage)
 
 }
 
 func handleRoute(method string, body []byte, ctx *fasthttp.RequestCtx) {
+	var item *model.Route
+	err := json.Unmarshal(body, item)
+	if err != nil {
+		//TODO: Return err
+	}
+	err = controller.Upsert(item)
+	if err != nil {
+		//TODO: Return err
+	}
+	ctx.Response.SetStatusCode(http.StatusOK)
+	ctx.Response.SetBody(model.OKMessage)
 
 }
