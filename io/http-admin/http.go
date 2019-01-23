@@ -42,17 +42,32 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 }
 
 func handleService(method string, body []byte, ctx *fasthttp.RequestCtx) {
-	var item *model.Service
-	err := json.Unmarshal(body, item)
-	if err != nil {
-		//TODO: Return err
+	if method == http.MethodPost || method == http.MethodPut {
+		var item *model.Service
+		err := json.Unmarshal(body, item)
+		if err != nil {
+			//TODO: Return err
+		}
+		err = controller.Upsert(item)
+		if err != nil {
+			//TODO: Return err
+		}
+		ctx.Response.SetStatusCode(http.StatusOK)
+		ctx.Response.SetBody(model.OKMessage)
+
+	} else if method == http.MethodGet {
+		ch := controller.GetAllServices()
+		var arr []*model.Service
+		for item := range ch {
+			arr = append(arr, item)
+		}
+		b, err := json.Marshal(arr)
+		if err != nil {
+			//TODO: log
+		}
+		ctx.Response.SetStatusCode(http.StatusOK)
+		ctx.Response.SetBody(b)
 	}
-	err = controller.Upsert(item)
-	if err != nil {
-		//TODO: Return err
-	}
-	ctx.Response.SetStatusCode(http.StatusOK)
-	ctx.Response.SetBody(model.OKMessage)
 
 }
 
