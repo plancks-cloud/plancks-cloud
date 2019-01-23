@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	log.Println("oh hai")
+	log.Println("☁️☁️☁️ Planck's Cloud is starting ☁️☁️☁️")
 
 	http_admin.Startup()
 
