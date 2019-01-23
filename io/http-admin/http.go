@@ -49,11 +49,13 @@ func handleService(method string, body []byte, ctx *fasthttp.RequestCtx) {
 		err := json.Unmarshal(body, item)
 		if err != nil {
 			fmt.Println(err)
+			//TODO: respond with 500 to client
 			return
 		}
 		err = controller.Upsert(item)
 		if err != nil {
 			fmt.Println(err)
+			//TODO: respond with 500 to client
 			return
 		}
 		ctx.Response.SetStatusCode(http.StatusOK)
@@ -67,9 +69,16 @@ func handleService(method string, body []byte, ctx *fasthttp.RequestCtx) {
 		}
 		b, err := json.Marshal(arr)
 		if err != nil {
-			//TODO: log
+			fmt.Println(err)
+			//TODO: respond with 500 to client
+			return
 		}
+		//Send back empty array not null
 		ctx.Response.SetStatusCode(http.StatusOK)
+		if len(arr) == 0 {
+			ctx.Response.SetBody([]byte("[]"))
+			return
+		}
 		ctx.Response.SetBody(b)
 	}
 
