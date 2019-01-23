@@ -4,6 +4,7 @@ package http_router
 
 import (
 	"fmt"
+	"github.com/plancks-cloud/plancks-cloud/model"
 	"io"
 	"log"
 	"net"
@@ -13,27 +14,27 @@ import (
 	"time"
 )
 
-var (
-	listenAddr = "127.0.0.1:6228"
-
-	target   = "http://127.0.0.1:8000"
-	targetWS = "127.0.0.1:8000"
-)
-
-func StartProxy() (stop chan bool) {
-	stop = make(chan bool)
-	u, err := url.Parse(target)
-	if err != nil {
-		fmt.Println(err)
+func Serve(listenAddr string, prev chan bool, routes []model.Route) chan bool {
+	if prev != nil {
+		fmt.Println("Stopping proxy server")
+		prev <- true
+		time.Sleep(250 * time.Millisecond) //Not sure how necessary this is...
 	}
-	rp := httputil.NewSingleHostReverseProxy(u)
+	return startProxy(listenAddr, routes)
+}
+
+func startProxy(listenAddr string, routes []model.Route) (stop chan bool) {
+	fmt.Println("Starting proxy server")
+	stop = make(chan bool)
 
 	l, err := net.Listen("tcp", listenAddr)
 	if err != nil {
 		log.Println(err)
 	}
+
+	m := newReverseProxyMap(routes)
 	go func() {
-		_ = http.Serve(l, NewRPHandler(rp))
+		_ = http.Serve(l, newReverseProxyHandler(routes, m))
 	}()
 	go func() {
 		<-stop
@@ -47,7 +48,21 @@ func StartProxy() (stop chan bool) {
 
 }
 
-func NewRPHandler(rp *httputil.ReverseProxy) http.Handler {
+func newReverseProxyMap(routes []model.Route) map[string]*httputil.ReverseProxy {
+	m := make(map[string]*httputil.ReverseProxy)
+	for _, route := range routes {
+		u, err := url.Parse(route.GetHttpAddress())
+		if err != nil {
+			fmt.Println(err)
+			//TODO: check this before it gets here?
+		}
+		m[route.DomainName] = httputil.NewSingleHostReverseProxy(u)
+	}
+	return m
+
+}
+
+func newReverseProxyHandler(routes []model.Route, m map[string]*httputil.ReverseProxy) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		hj, isHJ := w.(http.Hijacker)
 		if r.Header.Get("Upgrade") == "websocket" && isHJ {
@@ -60,7 +75,17 @@ func NewRPHandler(rp *httputil.ReverseProxy) http.Handler {
 			defer c.Close()
 
 			var be net.Conn
-			be, err = net.DialTimeout("tcp", targetWS, 10*time.Second)
+			found := false
+			for _, route := range routes {
+				if fmt.Sprint(route.DomainName, ":6228") == r.Host {
+					be, err = net.DialTimeout("tcp", route.GetWsAddress(), 10*time.Second)
+					found = true
+					break
+				}
+			}
+			if !found {
+				fmt.Println("Could not find domain name among routes: ", r.Host)
+			}
 
 			if err != nil {
 				log.Printf("websocket Dial: %v", err)
@@ -93,6 +118,6 @@ func NewRPHandler(rp *httputil.ReverseProxy) http.Handler {
 			}
 			return
 		}
-		rp.ServeHTTP(w, r)
+		m[r.Host].ServeHTTP(w, r)
 	})
 }

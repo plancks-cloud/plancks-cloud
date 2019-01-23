@@ -101,6 +101,7 @@ func handleRoute(method string, body []byte, ctx *fasthttp.RequestCtx) {
 		}
 		ctx.Response.SetStatusCode(http.StatusOK)
 		ctx.Response.SetBody(model.OKMessage)
+		controller.RefreshProxy()
 
 	} else if method == http.MethodGet {
 		ch := controller.GetAllRoutes()

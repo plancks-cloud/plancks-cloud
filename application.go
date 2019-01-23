@@ -1,21 +1,17 @@
 package main
 
 import (
-	"github.com/plancks-cloud/plancks-cloud/io/http-router"
+	"flag"
+	"github.com/plancks-cloud/plancks-cloud/io/http-admin"
+	"github.com/plancks-cloud/plancks-cloud/io/mem"
 	"log"
-	"time"
 )
 
 func main() {
+	flag.Parse()
 	log.Println("☁️☁️☁️ Planck's Cloud is starting ☁️☁️☁️")
 
-	//mem.Init()
-
-	stopRP := http_router.StartProxy()
-
-	//http_admin.Startup()
-
-	time.Sleep(60 * time.Second)
-	stopRP <- true
+	mem.Init()
+	http_admin.Startup()
 
 }
