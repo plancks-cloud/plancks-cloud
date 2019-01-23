@@ -14,35 +14,15 @@ var (
 						Unique:  true,
 						Indexer: &memdb.StringFieldIndex{Field: "Name"},
 					},
-					"contractId": {
-						Name:    "contractId",
-						Unique:  false,
-						Indexer: &memdb.StringFieldIndex{Field: "ContractID"},
-					},
 				},
 			},
-			"Wallet": {
-				Name: "Wallet",
+			"Route": {
+				Name: "Route",
 				Indexes: map[string]*memdb.IndexSchema{
 					"id": {
 						Name:    "id",
 						Unique:  true,
 						Indexer: &memdb.StringFieldIndex{Field: "ID"},
-					},
-				},
-			},
-			"CancelContract": {
-				Name: "CancelContract",
-				Indexes: map[string]*memdb.IndexSchema{
-					"id": {
-						Name:    "id",
-						Unique:  true,
-						Indexer: &memdb.StringFieldIndex{Field: "ID"},
-					},
-					"contractId": {
-						Name:    "contractId",
-						Unique:  false,
-						Indexer: &memdb.StringFieldIndex{Field: "ContractID"},
 					},
 				},
 			},
