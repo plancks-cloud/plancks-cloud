@@ -9,10 +9,10 @@ var (
 			"Service": {
 				Name: "Service",
 				Indexes: map[string]*memdb.IndexSchema{
-					"Name": {
-						Name:    "Name",
+					"id": {
+						Name:    "id",
 						Unique:  true,
-						Indexer: &memdb.StringFieldIndex{Field: "Name"},
+						Indexer: &memdb.StringFieldIndex{Field: "ID"},
 					},
 				},
 			},
