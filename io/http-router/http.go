@@ -14,68 +14,85 @@ import (
 )
 
 var (
+	listenAddr = "127.0.0.1:6228"
+
 	target   = "http://127.0.0.1:8000"
 	targetWS = "127.0.0.1:8000"
 )
 
-func Proxy() {
-
+func StartProxy() (stop chan bool) {
+	stop = make(chan bool)
 	u, err := url.Parse(target)
 	if err != nil {
 		fmt.Println(err)
 	}
 	rp := httputil.NewSingleHostReverseProxy(u)
 
-	httpsServer := &http.Server{
-		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			hj, isHJ := w.(http.Hijacker)
-			if r.Header.Get("Upgrade") == "websocket" && isHJ {
-				c, br, err := hj.Hijack()
-				if err != nil {
-					log.Printf("websocket websocket hijack: %v", err)
-					http.Error(w, err.Error(), 500)
-					return
-				}
-				defer c.Close()
+	l, err := net.Listen("tcp", listenAddr)
+	if err != nil {
+		log.Println(err)
+	}
+	go func() {
+		_ = http.Serve(l, NewRPHandler(rp))
+	}()
+	go func() {
+		<-stop
+		err = l.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
 
-				var be net.Conn
-				be, err = net.DialTimeout("tcp", targetWS, 10*time.Second)
+	}()
+	return
 
-				if err != nil {
-					log.Printf("websocket Dial: %v", err)
-					http.Error(w, err.Error(), 500)
-					return
-				}
-				defer be.Close()
-				if err := r.Write(be); err != nil {
-					log.Printf("websocket backend write request: %v", err)
-					http.Error(w, err.Error(), 500)
-					return
-				}
-				errc := make(chan error, 1)
-				go func() {
-					n, err := io.Copy(be, br) // backend <- buffered reader
-					if err != nil {
-						err = fmt.Errorf("websocket: to copy backend from buffered reader: %v, %v", n, err)
-					}
-					errc <- err
-				}()
-				go func() {
-					n, err := io.Copy(c, be) // raw conn <- backend
-					if err != nil {
-						err = fmt.Errorf("websocket: to raw conn from backend: %v, %v", n, err)
-					}
-					errc <- err
-				}()
-				if err := <-errc; err != nil {
-					log.Print(err)
-				}
+}
+
+func NewRPHandler(rp *httputil.ReverseProxy) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		hj, isHJ := w.(http.Hijacker)
+		if r.Header.Get("Upgrade") == "websocket" && isHJ {
+			c, br, err := hj.Hijack()
+			if err != nil {
+				log.Printf("websocket websocket hijack: %v", err)
+				http.Error(w, err.Error(), 500)
 				return
 			}
-			rp.ServeHTTP(w, r)
-		}),
-	}
+			defer c.Close()
 
-	panic(httpsServer.ListenAndServe())
+			var be net.Conn
+			be, err = net.DialTimeout("tcp", targetWS, 10*time.Second)
 
+			if err != nil {
+				log.Printf("websocket Dial: %v", err)
+				http.Error(w, err.Error(), 500)
+				return
+			}
+			defer be.Close()
+			if err := r.Write(be); err != nil {
+				log.Printf("websocket backend write request: %v", err)
+				http.Error(w, err.Error(), 500)
+				return
+			}
+			errc := make(chan error, 1)
+			go func() {
+				n, err := io.Copy(be, br) // backend <- buffered reader
+				if err != nil {
+					err = fmt.Errorf("websocket: to copy backend from buffered reader: %v, %v", n, err)
+				}
+				errc <- err
+			}()
+			go func() {
+				n, err := io.Copy(c, be) // raw conn <- backend
+				if err != nil {
+					err = fmt.Errorf("websocket: to raw conn from backend: %v, %v", n, err)
+				}
+				errc <- err
+			}()
+			if err := <-errc; err != nil {
+				log.Print(err)
+			}
+			return
+		}
+		rp.ServeHTTP(w, r)
+	})
 }
