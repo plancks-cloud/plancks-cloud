@@ -85,16 +85,43 @@ func handleService(method string, body []byte, ctx *fasthttp.RequestCtx) {
 }
 
 func handleRoute(method string, body []byte, ctx *fasthttp.RequestCtx) {
-	var item *model.Route
-	err := json.Unmarshal(body, item)
-	if err != nil {
-		//TODO: Return err
+	if method == http.MethodPost || method == http.MethodPut {
+		var item = &model.Route{}
+		fmt.Println(string(body))
+		err := json.Unmarshal(body, item)
+		if err != nil {
+			fmt.Println(err)
+			//TODO: respond with 500 to client
+			return
+		}
+		err = controller.Upsert(item)
+		if err != nil {
+			fmt.Println(err)
+			//TODO: respond with 500 to client
+			return
+		}
+		ctx.Response.SetStatusCode(http.StatusOK)
+		ctx.Response.SetBody(model.OKMessage)
+
+	} else if method == http.MethodGet {
+		ch := controller.GetAllRoutes()
+		var arr []*model.Route
+		for item := range ch {
+			arr = append(arr, item)
+		}
+		b, err := json.Marshal(arr)
+		if err != nil {
+			fmt.Println(err)
+			//TODO: respond with 500 to client
+			return
+		}
+		//Send back empty array not null
+		ctx.Response.SetStatusCode(http.StatusOK)
+		if len(arr) == 0 {
+			ctx.Response.SetBody([]byte("[]"))
+			return
+		}
+		ctx.Response.SetBody(b)
 	}
-	err = controller.Upsert(item)
-	if err != nil {
-		//TODO: Return err
-	}
-	ctx.Response.SetStatusCode(http.StatusOK)
-	ctx.Response.SetBody(model.OKMessage)
 
 }
