@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/plancks-cloud/plancks-cloud/controller"
 	"github.com/plancks-cloud/plancks-cloud/model"
+	"github.com/plancks-cloud/plancks-cloud/util"
 	"log"
 	"net/http"
 
@@ -30,39 +31,22 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 	method := string(ctx.Method())
 	requestURI := string(ctx.Request.RequestURI())
 
-	if requestURI == "/service" {
+	if requestURI == "/apply" {
+		handleAny(method, ctx.Request.Body(), ctx)
+	} else if requestURI == "/service" {
 		handleService(method, ctx.Request.Body(), ctx)
 	} else if requestURI == "/route" {
 		handleRoute(method, ctx.Request.Body(), ctx)
-	} else if requestURI == "/apply" {
-		handleAny(method, ctx.Request.Body(), ctx)
 	} else {
 		log.Println("Unhandled route! ", requestURI)
 	}
+	//TODO: say unhandled route?
 	ctx.SetContentType("application/json; charset=utf8")
 
 }
 
 func handleService(method string, body []byte, ctx *fasthttp.RequestCtx) {
-	if method == http.MethodPost || method == http.MethodPut {
-		var item = &model.Service{}
-		fmt.Println(string(body))
-		err := json.Unmarshal(body, item)
-		if err != nil {
-			fmt.Println(err)
-			//TODO: respond with 500 to client
-			return
-		}
-		err = controller.Upsert(item)
-		if err != nil {
-			fmt.Println(err)
-			//TODO: respond with 500 to client
-			return
-		}
-		ctx.Response.SetStatusCode(http.StatusOK)
-		ctx.Response.SetBody(model.OKMessage)
-
-	} else if method == http.MethodGet {
+	if method == http.MethodGet {
 		ch := controller.GetAllServices()
 		var arr []*model.Service
 		for item := range ch {
@@ -75,37 +59,16 @@ func handleService(method string, body []byte, ctx *fasthttp.RequestCtx) {
 			return
 		}
 		//Send back empty array not null
-		ctx.Response.SetStatusCode(http.StatusOK)
 		if len(arr) == 0 {
-			ctx.Response.SetBody([]byte("[]"))
-			return
+			b = []byte("[]")
 		}
-		ctx.Response.SetBody(b)
+		util.WriteJsonResponseToReq(ctx, http.StatusOK, b)
 	}
 
 }
 
 func handleRoute(method string, body []byte, ctx *fasthttp.RequestCtx) {
-	if method == http.MethodPost || method == http.MethodPut {
-		var item = &model.Route{}
-		fmt.Println(string(body))
-		err := json.Unmarshal(body, item)
-		if err != nil {
-			fmt.Println(err)
-			//TODO: respond with 500 to client
-			return
-		}
-		err = controller.Upsert(item)
-		if err != nil {
-			fmt.Println(err)
-			//TODO: respond with 500 to client
-			return
-		}
-		ctx.Response.SetStatusCode(http.StatusOK)
-		ctx.Response.SetBody(model.OKMessage)
-		controller.RefreshProxy()
-
-	} else if method == http.MethodGet {
+	if method == http.MethodGet {
 		ch := controller.GetAllRoutes()
 		var arr []*model.Route
 		for item := range ch {
@@ -118,14 +81,11 @@ func handleRoute(method string, body []byte, ctx *fasthttp.RequestCtx) {
 			return
 		}
 		//Send back empty array not null
-		ctx.Response.SetStatusCode(http.StatusOK)
 		if len(arr) == 0 {
-			ctx.Response.SetBody([]byte("[]"))
-			return
+			b = []byte("[]")
 		}
-		ctx.Response.SetBody(b)
+		util.WriteJsonResponseToReq(ctx, http.StatusOK, b)
 	}
-
 }
 
 func handleAny(method string, body []byte, ctx *fasthttp.RequestCtx) {
