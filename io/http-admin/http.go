@@ -138,7 +138,6 @@ func handleAny(method string, body []byte, ctx *fasthttp.RequestCtx) {
 			return
 		}
 		if item.Type == "route" {
-			fmt.Println("Going to look for routes")
 			var routes = &[]model.Route{}
 			err := json.Unmarshal(item.List, routes)
 			if err != nil {
@@ -151,7 +150,16 @@ func handleAny(method string, body []byte, ctx *fasthttp.RequestCtx) {
 			controller.RefreshProxy()
 
 		} else if item.Type == "service" {
-			panic("Service handler for /apply not implemented! ")
+			var s = &[]model.Service{}
+			err := json.Unmarshal(item.List, s)
+			if err != nil {
+				fmt.Println(err)
+			}
+			err = controller.InsertManyServices(s)
+			if err != nil {
+				fmt.Println(err)
+			}
+			//TODO: Call docker client ensure services are there and up to day
 		} else {
 			panic(fmt.Sprint("Unknown object type in apply: ", item.Type))
 		}

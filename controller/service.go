@@ -25,3 +25,13 @@ func iteratorToManyServices(iterator memdb.ResultIterator, err error, out chan *
 	}
 
 }
+
+func InsertManyServices(l *[]model.Service) (err error) {
+	for _, item := range *l {
+		err = Upsert(&item)
+		if err != nil {
+			return err
+		}
+	}
+	return
+}
