@@ -5,6 +5,7 @@ package http_router
 import (
 	"fmt"
 	"github.com/plancks-cloud/plancks-cloud/model"
+	"github.com/plancks-cloud/plancks-cloud/util"
 	"io"
 	"log"
 	"net"
@@ -77,14 +78,14 @@ func newReverseProxyHandler(routes []model.Route, m map[string]*httputil.Reverse
 			var be net.Conn
 			found := false
 			for _, route := range routes {
-				if fmt.Sprint(route.DomainName, ":6228") == r.Host {
+				if route.DomainName == util.HostOfURL(r.Host) {
 					be, err = net.DialTimeout("tcp", route.GetWsAddress(), 10*time.Second)
 					found = true
 					break
 				}
 			}
 			if !found {
-				fmt.Println("Could not find domain name among routes: ", r.Host)
+				fmt.Println("Could not find domain name among routes: ", util.HostOfURL(r.Host))
 			}
 
 			if err != nil {
@@ -118,6 +119,12 @@ func newReverseProxyHandler(routes []model.Route, m map[string]*httputil.Reverse
 			}
 			return
 		}
-		m[r.Host].ServeHTTP(w, r)
+		rp := m[util.HostOfURL(r.Host)]
+		if rp == nil {
+			fmt.Println("Could not find host: ", util.HostOfURL(r.Host))
+			//TODO: Send error
+			return
+		}
+		rp.ServeHTTP(w, r)
 	})
 }
