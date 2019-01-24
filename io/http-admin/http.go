@@ -144,12 +144,9 @@ func handleAny(method string, body []byte, ctx *fasthttp.RequestCtx) {
 			if err != nil {
 				fmt.Println(err)
 			}
-			for _, route := range *routes {
-				fmt.Println("inserting a route! ", route.DomainName)
-				err := controller.Upsert(&route)
-				if err != nil {
-					fmt.Println("Could not insert route, ", err)
-				}
+			err = controller.InsertMany(routes)
+			if err != nil {
+				fmt.Println(err)
 			}
 			controller.RefreshProxy()
 
