@@ -34,6 +34,8 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 		handleService(method, ctx.Request.Body(), ctx)
 	} else if requestURI == "/route" {
 		handleRoute(method, ctx.Request.Body(), ctx)
+	} else if requestURI == "/apply" {
+		handleAny(method, ctx.Request.Body(), ctx)
 	} else {
 		log.Println("Unhandled route! ", requestURI)
 	}
@@ -122,6 +124,44 @@ func handleRoute(method string, body []byte, ctx *fasthttp.RequestCtx) {
 			return
 		}
 		ctx.Response.SetBody(b)
+	}
+
+}
+
+func handleAny(method string, body []byte, ctx *fasthttp.RequestCtx) {
+	if method == http.MethodPost || method == http.MethodPut {
+		var item = &model.Object{}
+		err := json.Unmarshal(body, &item)
+		if err != nil {
+			fmt.Println(err)
+			//TODO: http reply
+			return
+		}
+		if item.Type == "route" {
+			fmt.Println("Going to look for routes")
+			var routes = &[]model.Route{}
+			err := json.Unmarshal(item.List, routes)
+			if err != nil {
+				fmt.Println(err)
+			}
+			for _, route := range *routes {
+				fmt.Println("inserting a route! ", route.DomainName)
+				err := controller.Upsert(&route)
+				if err != nil {
+					fmt.Println("Could not insert route, ", err)
+				}
+			}
+			controller.RefreshProxy()
+
+		} else if item.Type == "service" {
+			panic("Service handler for /apply not implemented! ")
+		} else {
+			panic(fmt.Sprint("Unknown object type in apply: ", item.Type))
+		}
+
+		ctx.Response.SetStatusCode(http.StatusOK)
+		ctx.Response.SetBody(model.OKMessage)
+
 	}
 
 }
