@@ -40,8 +40,7 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 	} else {
 		log.Println("Unhandled route! ", requestURI)
 	}
-	//TODO: say unhandled route?
-	ctx.SetContentType("application/json; charset=utf8")
+	util.WriteErrorToReq(ctx, fmt.Sprint("Could not find a route for ", requestURI))
 
 }
 
@@ -55,7 +54,7 @@ func handleService(method string, body []byte, ctx *fasthttp.RequestCtx) {
 		b, err := json.Marshal(arr)
 		if err != nil {
 			fmt.Println(err)
-			//TODO: respond with 500 to client
+			util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
 			return
 		}
 		//Send back empty array not null
@@ -77,7 +76,7 @@ func handleRoute(method string, body []byte, ctx *fasthttp.RequestCtx) {
 		b, err := json.Marshal(arr)
 		if err != nil {
 			fmt.Println(err)
-			//TODO: respond with 500 to client
+			util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
 			return
 		}
 		//Send back empty array not null
@@ -94,7 +93,7 @@ func handleAny(method string, body []byte, ctx *fasthttp.RequestCtx) {
 		err := json.Unmarshal(body, &item)
 		if err != nil {
 			fmt.Println(err)
-			//TODO: http reply
+			util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
 			return
 		}
 		if item.Type == "route" {
@@ -102,6 +101,8 @@ func handleAny(method string, body []byte, ctx *fasthttp.RequestCtx) {
 			err := json.Unmarshal(item.List, routes)
 			if err != nil {
 				fmt.Println(err)
+				util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
+				return
 			}
 			err = controller.InsertManyRoutes(routes)
 			if err != nil {
@@ -114,14 +115,21 @@ func handleAny(method string, body []byte, ctx *fasthttp.RequestCtx) {
 			err := json.Unmarshal(item.List, s)
 			if err != nil {
 				fmt.Println(err)
+				util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
+				return
 			}
 			err = controller.InsertManyServices(s)
 			if err != nil {
 				fmt.Println(err)
+				util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
+				return
 			}
+
 			//TODO: Call docker client ensure services are there and up to day
+
 		} else {
-			panic(fmt.Sprint("Unknown object type in apply: ", item.Type))
+			util.WriteErrorToReq(ctx, fmt.Sprint("Could not handle type in object: ", item.Type))
+			return
 		}
 
 		ctx.Response.SetStatusCode(http.StatusOK)
