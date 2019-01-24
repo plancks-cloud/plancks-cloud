@@ -24,7 +24,7 @@ func GetAllRoutes() (resp chan *model.Route) {
 
 }
 
-func InsertMany(routes *[]model.Route) (err error) {
+func InsertManyRoutes(routes *[]model.Route) (err error) {
 	for _, route := range *routes {
 		err = Upsert(&route)
 		if err != nil {

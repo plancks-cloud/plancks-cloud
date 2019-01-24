@@ -144,7 +144,7 @@ func handleAny(method string, body []byte, ctx *fasthttp.RequestCtx) {
 			if err != nil {
 				fmt.Println(err)
 			}
-			err = controller.InsertMany(routes)
+			err = controller.InsertManyRoutes(routes)
 			if err != nil {
 				fmt.Println(err)
 			}
