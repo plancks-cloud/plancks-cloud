@@ -35,7 +35,7 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 	} else if requestURI == "/route" {
 		handleRoute(method, ctx.Request.Body(), ctx)
 	} else {
-		log.Fatalln("Unhandled route! ", requestURI)
+		log.Println("Unhandled route! ", requestURI)
 	}
 	ctx.SetContentType("application/json; charset=utf8")
 
