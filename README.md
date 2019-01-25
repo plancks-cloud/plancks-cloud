@@ -23,7 +23,7 @@ go run application.go
 
 # API
 
-The API listens on 6227 by default. This can be set by setting the `addr` ENV variable.
+The API listens on :6227 by default. This can be set by setting the `addr` ENV variable.
 
 ## Insert or update an object
 HTTP **PUT** /apply
@@ -39,3 +39,8 @@ HTTP **PUT** /apply
 	]
 }
 ```
+
+# Proxy
+
+The API listens on :6228 by default. This can be set by setting the `proxy` ENV variable.
+

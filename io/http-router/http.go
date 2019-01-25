@@ -3,6 +3,7 @@ package http_router
 //Taken from from https://gist.github.com/bradfitz/1d7bdf12278d4d713212ce6c74875dab
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/plancks-cloud/plancks-cloud/model"
 	"github.com/plancks-cloud/plancks-cloud/util"
@@ -15,16 +16,17 @@ import (
 	"time"
 )
 
-func Serve(listenAddr string, prev chan bool, routes []model.Route) chan bool {
+func StopServer(prev chan bool) {
 	if prev != nil {
-		fmt.Println("Stopping proxy server")
+		fmt.Println("Stopping proxy server...")
 		prev <- true
-		time.Sleep(250 * time.Millisecond) //Not sure how necessary this is...
+		time.Sleep(50 * time.Millisecond) //Not sure how necessary this is...
+
 	}
-	return startProxy(listenAddr, routes)
+
 }
 
-func startProxy(listenAddr string, routes []model.Route) (stop chan bool) {
+func Serve(listenAddr string, routes []model.Route) (stop chan bool) {
 	fmt.Println("Starting proxy server")
 	stop = make(chan bool)
 
@@ -43,6 +45,7 @@ func startProxy(listenAddr string, routes []model.Route) (stop chan bool) {
 		if err != nil {
 			log.Fatal(err)
 		}
+		close(stop)
 
 	}()
 	return
@@ -67,56 +70,7 @@ func newReverseProxyHandler(routes []model.Route, m map[string]*httputil.Reverse
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		hj, isHJ := w.(http.Hijacker)
 		if r.Header.Get("Upgrade") == "websocket" && isHJ {
-			c, br, err := hj.Hijack()
-			if err != nil {
-				log.Printf("websocket websocket hijack: %v", err)
-				http.Error(w, err.Error(), 500)
-				return
-			}
-			defer c.Close()
-
-			var be net.Conn
-			found := false
-			for _, route := range routes {
-				if route.DomainName == util.HostOfURL(r.Host) {
-					be, err = net.DialTimeout("tcp", route.GetWsAddress(), 10*time.Second)
-					found = true
-					break
-				}
-			}
-			if !found {
-				fmt.Println("Could not find domain name among routes: ", util.HostOfURL(r.Host))
-			}
-
-			if err != nil {
-				log.Printf("websocket Dial: %v", err)
-				http.Error(w, err.Error(), 500)
-				return
-			}
-			defer be.Close()
-			if err := r.Write(be); err != nil {
-				log.Printf("websocket backend write request: %v", err)
-				http.Error(w, err.Error(), 500)
-				return
-			}
-			errc := make(chan error, 1)
-			go func() {
-				n, err := io.Copy(be, br) // backend <- buffered reader
-				if err != nil {
-					err = fmt.Errorf("websocket: to copy backend from buffered reader: %v, %v", n, err)
-				}
-				errc <- err
-			}()
-			go func() {
-				n, err := io.Copy(c, be) // raw conn <- backend
-				if err != nil {
-					err = fmt.Errorf("websocket: to raw conn from backend: %v, %v", n, err)
-				}
-				errc <- err
-			}()
-			if err := <-errc; err != nil {
-				log.Print(err)
-			}
+			handleHiJackedWS(hj, r, w, routes)
 			return
 		}
 		rp := m[util.HostOfURL(r.Host)]
@@ -127,4 +81,66 @@ func newReverseProxyHandler(routes []model.Route, m map[string]*httputil.Reverse
 		}
 		rp.ServeHTTP(w, r)
 	})
+}
+
+func handleHiJackedWS(hj http.Hijacker, r *http.Request, w http.ResponseWriter, routes []model.Route) {
+	c, br, err := hj.Hijack()
+	if err != nil {
+		log.Printf("websocket websocket hijack: %v", err)
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	defer c.Close()
+
+	var be net.Conn
+	found, route := findRouteByHost(routes, util.HostOfURL(r.Host))
+	if !found {
+		fmt.Println("Could not find domain name among routes: ", util.HostOfURL(r.Host))
+		return
+	}
+	be, err = net.DialTimeout("tcp", route.GetWsAddress(), 10*time.Second)
+
+	if err != nil {
+		log.Printf("websocket Dial: %v", err)
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	defer be.Close()
+	if err := r.Write(be); err != nil {
+		log.Printf("websocket backend write request: %v", err)
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	errc := make(chan error, 1)
+	startWSReadWrite(&be, br, errc, &c)
+	if err := <-errc; err != nil {
+		log.Print(err)
+	}
+}
+
+func startWSReadWrite(be *net.Conn, br *bufio.ReadWriter, errc chan error, c *net.Conn) {
+	go func() {
+		n, err := io.Copy(*be, br) // backend <- buffered reader
+		if err != nil {
+			err = fmt.Errorf("websocket: to copy backend from buffered reader: %v, %v", n, err)
+		}
+		errc <- err
+	}()
+	go func() {
+		n, err := io.Copy(*c, *be) // raw conn <- backend
+		if err != nil {
+			err = fmt.Errorf("websocket: to raw conn from backend: %v, %v", n, err)
+		}
+		errc <- err
+	}()
+}
+
+func findRouteByHost(routes []model.Route, host string) (found bool, route model.Route) {
+	for _, route = range routes {
+		if route.DomainName == host {
+			found = true
+			return
+		}
+	}
+	return
 }

@@ -21,7 +21,14 @@ func GetAllRoutes() (resp chan *model.Route) {
 		close(resp)
 	}()
 	return resp
+}
 
+func GetAllRoutesCopy() []model.Route {
+	var arr []model.Route
+	for item := range GetAllRoutes() {
+		arr = append(arr, *item)
+	}
+	return arr
 }
 
 func InsertManyRoutes(routes *[]model.Route) (err error) {
@@ -44,9 +51,7 @@ func iteratorToManyRoutes(iterator memdb.ResultIterator, err error, out chan *mo
 }
 
 func RefreshProxy() {
-	var arr []model.Route
-	for item := range GetAllRoutes() {
-		arr = append(arr, *item)
-	}
-	stop = http_router.Serve(*proxy, stop, arr)
+	arr := GetAllRoutesCopy()
+	http_router.StopServer(stop)
+	stop = http_router.Serve(*proxy, arr)
 }
