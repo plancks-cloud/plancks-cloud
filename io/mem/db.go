@@ -2,7 +2,7 @@ package mem
 
 import (
 	"github.com/hashicorp/go-memdb"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 //IteratorToChannel reads an iterator into a channel
@@ -10,7 +10,7 @@ func IteratorToChannel(iterator memdb.ResultIterator, err error) chan interface{
 	c := make(chan interface{})
 	go func(c chan interface{}) {
 		if err != nil {
-			log.Error(err.Error())
+			logrus.Error(err.Error())
 			close(c)
 			return
 		}

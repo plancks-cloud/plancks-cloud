@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/hashicorp/go-memdb"
 	"github.com/plancks-cloud/plancks-cloud/util"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -56,11 +56,11 @@ func getTransaction(write bool) *memdb.Txn {
 //Push stores an object
 func Push(obj interface{}) error {
 	name := util.GetType(obj)
-	log.Debugln(fmt.Sprintf("Trying to insert a: %s", name))
+	logrus.Debugln(fmt.Sprintf("Trying to insert a: %s", name))
 	txn := db.Txn(true)
 	defer txn.Abort()
 	if err := txn.Insert(name, obj); err != nil {
-		log.Errorln(fmt.Sprintf("Error pushing to mem: %s", err))
+		logrus.Errorln(fmt.Sprintf("Error pushing to mem: %s", err))
 		defer txn.Abort()
 		return err
 	}

@@ -5,7 +5,7 @@ import (
 	"github.com/plancks-cloud/plancks-cloud/controller"
 	"github.com/plancks-cloud/plancks-cloud/io/http-admin"
 	"github.com/plancks-cloud/plancks-cloud/io/mem"
-	"log"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -14,11 +14,15 @@ var (
 
 func main() {
 	flag.Parse()
-	log.Println("☁️☁️☁️ Planck's Cloud is starting ☁️☁️☁️")
+	logrus.Println("☁️☁️☁️ Planck's Cloud is starting ☁️☁️☁️")
 
+	logrus.Println("... ️starting health server")
 	controller.StartHealthServer()
 
+	logrus.Println("...️ starting in-memory DB")
 	mem.Init()
+
+	logrus.Println("...️ starting api")
 	http_admin.Startup(addr)
 
 }

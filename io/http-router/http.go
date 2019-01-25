@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"github.com/plancks-cloud/plancks-cloud/model"
 	"github.com/plancks-cloud/plancks-cloud/util"
+	"github.com/sirupsen/logrus"
 	"io"
-	"log"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -18,7 +18,7 @@ import (
 
 func StopServer(prev chan bool) {
 	if prev != nil {
-		log.Println("Stopping proxy server...")
+		logrus.Println("Stopping proxy server...")
 		prev <- true
 		time.Sleep(50 * time.Millisecond) //Not sure how necessary this is...
 
@@ -27,12 +27,12 @@ func StopServer(prev chan bool) {
 }
 
 func Serve(listenAddr string, routes []model.Route) (stop chan bool) {
-	log.Println("Starting proxy server")
+	logrus.Println("Starting proxy server")
 	stop = make(chan bool)
 
 	l, err := net.Listen("tcp", listenAddr)
 	if err != nil {
-		log.Println(err)
+		logrus.Println(err)
 	}
 
 	m := newReverseProxyMap(routes)
@@ -43,7 +43,7 @@ func Serve(listenAddr string, routes []model.Route) (stop chan bool) {
 		<-stop
 		err = l.Close()
 		if err != nil {
-			log.Fatal(err)
+			logrus.Fatal(err)
 		}
 		close(stop)
 
@@ -57,7 +57,7 @@ func newReverseProxyMap(routes []model.Route) map[string]*httputil.ReverseProxy 
 	for _, route := range routes {
 		u, err := url.Parse(route.GetHttpAddress())
 		if err != nil {
-			log.Println(err)
+			logrus.Println(err)
 			//TODO: check this before it gets here?
 		}
 		m[route.DomainName] = httputil.NewSingleHostReverseProxy(u)
@@ -75,7 +75,7 @@ func newReverseProxyHandler(routes []model.Route, m map[string]*httputil.Reverse
 		}
 		rp := m[util.HostOfURL(r.Host)]
 		if rp == nil {
-			log.Println("Could not find host: ", util.HostOfURL(r.Host))
+			logrus.Println("Could not find host: ", util.HostOfURL(r.Host))
 			//TODO: Send error
 			return
 		}
@@ -86,7 +86,7 @@ func newReverseProxyHandler(routes []model.Route, m map[string]*httputil.Reverse
 func handleHiJackedWS(hj http.Hijacker, r *http.Request, w http.ResponseWriter, routes []model.Route) {
 	c, br, err := hj.Hijack()
 	if err != nil {
-		log.Printf("websocket websocket hijack: %v", err)
+		logrus.Printf("websocket websocket hijack: %v", err)
 		http.Error(w, err.Error(), 500)
 		return
 	}
@@ -95,26 +95,26 @@ func handleHiJackedWS(hj http.Hijacker, r *http.Request, w http.ResponseWriter, 
 	var be net.Conn
 	found, route := findRouteByHost(routes, util.HostOfURL(r.Host))
 	if !found {
-		log.Println("Could not find domain name among routes: ", util.HostOfURL(r.Host))
+		logrus.Println("Could not find domain name among routes: ", util.HostOfURL(r.Host))
 		return
 	}
 	be, err = net.DialTimeout("tcp", route.GetWsAddress(), 10*time.Second)
 
 	if err != nil {
-		log.Printf("websocket Dial: %v", err)
+		logrus.Printf("websocket Dial: %v", err)
 		http.Error(w, err.Error(), 500)
 		return
 	}
 	defer be.Close()
 	if err := r.Write(be); err != nil {
-		log.Printf("websocket backend write request: %v", err)
+		logrus.Printf("websocket backend write request: %v", err)
 		http.Error(w, err.Error(), 500)
 		return
 	}
 	errc := make(chan error, 1)
 	startWSReadWrite(&be, br, errc, &c)
 	if err := <-errc; err != nil {
-		log.Print(err)
+		logrus.Print(err)
 	}
 }
 

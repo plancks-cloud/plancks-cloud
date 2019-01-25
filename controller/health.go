@@ -4,7 +4,7 @@ import (
 	"github.com/plancks-cloud/plancks-cloud/model"
 	"github.com/plancks-cloud/plancks-docker/controller/pc-docker"
 	pcmodel "github.com/plancks-cloud/plancks-docker/model"
-	"log"
+	"github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -26,11 +26,11 @@ func StartHealthServer() {
 }
 
 func getDesiredServiceStateAndFix() {
-	log.Println("⏰ Running health check")
+	logrus.Println("⏰ Running health check")
 	svcChan := GetAllServices()
 	dockerServices, err := pc_docker.GetAllServiceStates()
 	if err != nil {
-		log.Println(err)
+		logrus.Println(err)
 		return
 	}
 	checkExistingServices(svcChan, dockerServices)
@@ -50,9 +50,9 @@ func checkExistingServices(desiredServices chan *model.Service, foundServices []
 		if !found {
 			err := pc_docker.CreateService(d)
 			if err != nil {
-				log.Println("Could not start docker service ", err)
+				logrus.Println("Could not start docker service ", err)
 			}
 		}
 	}
-	log.Println("... health check tried to align ", count, " services")
+	logrus.Println("... health check tried to align ", count, " services")
 }

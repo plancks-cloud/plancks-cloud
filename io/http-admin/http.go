@@ -6,7 +6,7 @@ import (
 	"github.com/plancks-cloud/plancks-cloud/controller"
 	"github.com/plancks-cloud/plancks-cloud/model"
 	"github.com/plancks-cloud/plancks-cloud/util"
-	"log"
+	"github.com/sirupsen/logrus"
 	"net/http"
 
 	"github.com/valyala/fasthttp"
@@ -14,7 +14,7 @@ import (
 
 func Startup(addr *string) {
 	if err := fasthttp.ListenAndServe(*addr, requestHandler); err != nil {
-		log.Fatalf("Error in ListenAndServe: %s", err)
+		logrus.Fatalf("Error in ListenAndServe: %s", err)
 	}
 }
 
@@ -29,7 +29,7 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 	} else if requestURI == "/route" {
 		handleRoute(ctx)
 	} else {
-		log.Println("Unhandled route! ", requestURI)
+		logrus.Println("Unhandled route! ", requestURI)
 		util.WriteErrorToReq(ctx, fmt.Sprint("Could not find a route for ", requestURI))
 	}
 
@@ -42,7 +42,7 @@ func handleService(ctx *fasthttp.RequestCtx) {
 	}
 	b, err := json.Marshal(arr)
 	if err != nil {
-		log.Println(err)
+		logrus.Println(err)
 		util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
 		return
 	}
@@ -58,7 +58,7 @@ func handleRoute(ctx *fasthttp.RequestCtx) {
 	arr := controller.GetAllRoutesCopy()
 	b, err := json.Marshal(arr)
 	if err != nil {
-		log.Println(err)
+		logrus.Println(err)
 		util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
 		return
 	}
@@ -75,14 +75,14 @@ func handleApply(method string, body []byte, ctx *fasthttp.RequestCtx) {
 		var item = &model.Object{}
 		err := json.Unmarshal(body, &item)
 		if err != nil {
-			log.Println(err)
+			logrus.Println(err)
 			util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
 			return
 		}
 
 		err = controller.HandleApply(item)
 		if err != nil {
-			log.Println(err)
+			logrus.Println(err)
 			util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
 			return
 		}
