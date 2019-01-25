@@ -26,7 +26,7 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 	requestURI := string(ctx.Request.RequestURI())
 
 	if requestURI == "/apply" {
-		handleAny(method, ctx.Request.Body(), ctx)
+		handleApply(method, ctx.Request.Body(), ctx)
 	} else if requestURI == "/service" {
 		handleService(method, ctx.Request.Body(), ctx)
 	} else if requestURI == "/route" {
@@ -76,7 +76,7 @@ func handleRoute(method string, body []byte, ctx *fasthttp.RequestCtx) {
 
 }
 
-func handleAny(method string, body []byte, ctx *fasthttp.RequestCtx) {
+func handleApply(method string, body []byte, ctx *fasthttp.RequestCtx) {
 	if method == http.MethodPost || method == http.MethodPut {
 		var item = &model.Object{}
 		err := json.Unmarshal(body, &item)
@@ -85,39 +85,11 @@ func handleAny(method string, body []byte, ctx *fasthttp.RequestCtx) {
 			util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
 			return
 		}
-		if item.Type == "route" {
-			var routes = &[]model.Route{}
-			err := json.Unmarshal(item.List, routes)
-			if err != nil {
-				fmt.Println(err)
-				util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
-				return
-			}
-			err = controller.InsertManyRoutes(routes)
-			if err != nil {
-				fmt.Println(err)
-			}
-			controller.RefreshProxy()
 
-		} else if item.Type == "service" {
-			var s = &[]model.Service{}
-			err := json.Unmarshal(item.List, s)
-			if err != nil {
-				fmt.Println(err)
-				util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
-				return
-			}
-			err = controller.InsertManyServices(s)
-			if err != nil {
-				fmt.Println(err)
-				util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
-				return
-			}
-
-			//TODO: Call docker client ensure services are there and up to day
-
-		} else {
-			util.WriteErrorToReq(ctx, fmt.Sprint("Could not handle type in object: ", item.Type))
+		err = controller.HandleApply(item)
+		if err != nil {
+			fmt.Println(err)
+			util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
 			return
 		}
 
