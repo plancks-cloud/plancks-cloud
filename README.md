@@ -1,6 +1,10 @@
-<div style="text-align:center">
-<h1><img src="docs/logo.png" width="64px" /> Planck's Cloud <img src="docs/logob.png" width="64px" /></h1>  
-</div>
+# Planck's Cloud
+
+<p align="center">
+  <img src="docs/logo.png" width="64px" /> <img src="docs/logob.png" width="64px" />
+</p>
+
+  
 
 <img src="https://travis-ci.org/plancks-cloud/plancks-cloud.svg?branch=master" />&nbsp;
 <img src="https://goreportcard.com/badge/github.com/plancks-cloud/plancks-cloud"> &nbsp;
