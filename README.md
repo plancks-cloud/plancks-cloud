@@ -7,7 +7,7 @@
 [![codebeat badge](https://codebeat.co/badges/25407218-e856-4f5e-ac7c-9d045dc0fe5a)](https://codebeat.co/projects/github-com-plancks-cloud-plancks-cloud-master)
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://badges.mit-license.org)
 
-<img src="docs/logo.png" />
+<img src="docs/logo.png" width="100px" />
 Planck's Cloud turns every home into a data center. Host your next project from your own home.
 
 
