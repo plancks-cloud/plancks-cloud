@@ -4,6 +4,7 @@ import (
 	"github.com/hashicorp/go-memdb"
 	"github.com/plancks-cloud/plancks-cloud/io/mem"
 	"github.com/plancks-cloud/plancks-cloud/model"
+	"github.com/sirupsen/logrus"
 )
 
 func GetAllServices() (resp chan *model.Service) {
@@ -30,6 +31,7 @@ func InsertManyServices(l *[]model.Service) (err error) {
 	for _, item := range *l {
 		err = Upsert(&item)
 		if err != nil {
+			logrus.Error(err)
 			return err
 		}
 	}

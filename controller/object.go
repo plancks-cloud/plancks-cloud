@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/plancks-cloud/plancks-cloud/model"
+	"github.com/sirupsen/logrus"
 )
 
 func HandleApply(item *model.Object) (err error) {
@@ -25,10 +26,12 @@ func handleApplyRoutes(list json.RawMessage) (err error) {
 	var routes = &[]model.Route{}
 	err = json.Unmarshal(list, routes)
 	if err != nil {
+		logrus.Error(err)
 		return
 	}
 	err = InsertManyRoutes(routes)
 	if err != nil {
+		logrus.Error(err)
 		return
 	}
 	RefreshProxy()
@@ -40,10 +43,12 @@ func handleApplyServices(list json.RawMessage) (err error) {
 	var s = &[]model.Service{}
 	err = json.Unmarshal(list, s)
 	if err != nil {
+		logrus.Error(err)
 		return
 	}
 	err = InsertManyServices(s)
 	if err != nil {
+		logrus.Error(err)
 		return
 	}
 	healthDoorbell <- true //Ensures the health check runs

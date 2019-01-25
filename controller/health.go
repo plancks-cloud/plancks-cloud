@@ -22,15 +22,16 @@ func StartHealthServer() {
 			}
 		}
 	}()
+	healthDoorbell <- true
 
 }
 
 func getDesiredServiceStateAndFix() {
-	logrus.Println("⏰ Running health check")
+	logrus.Println("⏰  Running health check")
 	svcChan := GetAllServices()
 	dockerServices, err := pc_docker.GetAllServiceStates()
 	if err != nil {
-		logrus.Println(err)
+		logrus.Error(err)
 		return
 	}
 	checkExistingServices(svcChan, dockerServices)
@@ -50,8 +51,11 @@ func checkExistingServices(desiredServices chan *model.Service, foundServices []
 		if !found {
 			err := pc_docker.CreateService(d)
 			if err != nil {
-				logrus.Println("Could not start docker service ", err)
+				logrus.Error("Could not start docker service ", err)
+				continue
 			}
+			logrus.Println("✅  New service created")
+
 		}
 	}
 	logrus.Println("... health check tried to align ", count, " services")

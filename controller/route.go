@@ -6,6 +6,7 @@ import (
 	"github.com/plancks-cloud/plancks-cloud/io/http-router"
 	"github.com/plancks-cloud/plancks-cloud/io/mem"
 	"github.com/plancks-cloud/plancks-cloud/model"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -35,6 +36,7 @@ func InsertManyRoutes(routes *[]model.Route) (err error) {
 	for _, route := range *routes {
 		err = Upsert(&route)
 		if err != nil {
+			logrus.Error(err)
 			return err
 		}
 	}

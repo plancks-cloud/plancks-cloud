@@ -16,11 +16,11 @@ func main() {
 	flag.Parse()
 	logrus.Println("☁️☁️☁️ Planck's Cloud is starting ☁️☁️☁️")
 
-	logrus.Println("... ️starting health server")
-	controller.StartHealthServer()
-
 	logrus.Println("...️ starting in-memory DB")
 	mem.Init()
+
+	logrus.Println("... ️starting health server")
+	controller.StartHealthServer()
 
 	logrus.Println("...️ starting api")
 	http_admin.Startup(addr)
