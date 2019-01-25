@@ -16,16 +16,17 @@ import (
 	"time"
 )
 
-func Serve(listenAddr string, prev chan bool, routes []model.Route) chan bool {
+func StopServer(prev chan bool) {
 	if prev != nil {
-		fmt.Println("Stopping proxy server")
+		fmt.Println("Stopping proxy server...")
 		prev <- true
 		time.Sleep(50 * time.Millisecond) //Not sure how necessary this is...
+
 	}
-	return startProxy(listenAddr, routes)
+
 }
 
-func startProxy(listenAddr string, routes []model.Route) (stop chan bool) {
+func Serve(listenAddr string, routes []model.Route) (stop chan bool) {
 	fmt.Println("Starting proxy server")
 	stop = make(chan bool)
 
@@ -44,6 +45,7 @@ func startProxy(listenAddr string, routes []model.Route) (stop chan bool) {
 		if err != nil {
 			log.Fatal(err)
 		}
+		close(stop)
 
 	}()
 	return
