@@ -1,4 +1,4 @@
-# <img src="docs/logo.png" width="100px" /> Planck's Cloud 
+# <img src="docs/logo.png" width="64px" /> Planck's Cloud 
 
 
 <img src="https://travis-ci.org/plancks-cloud/plancks-cloud.svg?branch=master" />&nbsp;
