@@ -42,7 +42,7 @@ func handleService(ctx *fasthttp.RequestCtx) {
 	}
 	b, err := json.Marshal(arr)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
 		return
 	}
@@ -58,7 +58,7 @@ func handleRoute(ctx *fasthttp.RequestCtx) {
 	arr := controller.GetAllRoutesCopy()
 	b, err := json.Marshal(arr)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
 		return
 	}
@@ -75,14 +75,14 @@ func handleApply(method string, body []byte, ctx *fasthttp.RequestCtx) {
 		var item = &model.Object{}
 		err := json.Unmarshal(body, &item)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
 			return
 		}
 
 		err = controller.HandleApply(item)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
 			return
 		}

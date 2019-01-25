@@ -18,7 +18,7 @@ import (
 
 func StopServer(prev chan bool) {
 	if prev != nil {
-		fmt.Println("Stopping proxy server...")
+		log.Println("Stopping proxy server...")
 		prev <- true
 		time.Sleep(50 * time.Millisecond) //Not sure how necessary this is...
 
@@ -27,7 +27,7 @@ func StopServer(prev chan bool) {
 }
 
 func Serve(listenAddr string, routes []model.Route) (stop chan bool) {
-	fmt.Println("Starting proxy server")
+	log.Println("Starting proxy server")
 	stop = make(chan bool)
 
 	l, err := net.Listen("tcp", listenAddr)
@@ -57,7 +57,7 @@ func newReverseProxyMap(routes []model.Route) map[string]*httputil.ReverseProxy 
 	for _, route := range routes {
 		u, err := url.Parse(route.GetHttpAddress())
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			//TODO: check this before it gets here?
 		}
 		m[route.DomainName] = httputil.NewSingleHostReverseProxy(u)
@@ -75,7 +75,7 @@ func newReverseProxyHandler(routes []model.Route, m map[string]*httputil.Reverse
 		}
 		rp := m[util.HostOfURL(r.Host)]
 		if rp == nil {
-			fmt.Println("Could not find host: ", util.HostOfURL(r.Host))
+			log.Println("Could not find host: ", util.HostOfURL(r.Host))
 			//TODO: Send error
 			return
 		}
@@ -95,7 +95,7 @@ func handleHiJackedWS(hj http.Hijacker, r *http.Request, w http.ResponseWriter, 
 	var be net.Conn
 	found, route := findRouteByHost(routes, util.HostOfURL(r.Host))
 	if !found {
-		fmt.Println("Could not find domain name among routes: ", util.HostOfURL(r.Host))
+		log.Println("Could not find domain name among routes: ", util.HostOfURL(r.Host))
 		return
 	}
 	be, err = net.DialTimeout("tcp", route.GetWsAddress(), 10*time.Second)
