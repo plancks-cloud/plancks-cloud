@@ -28,9 +28,9 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 	if requestURI == "/apply" {
 		handleApply(method, ctx.Request.Body(), ctx)
 	} else if requestURI == "/service" {
-		handleService(method, ctx.Request.Body(), ctx)
+		handleService(ctx)
 	} else if requestURI == "/route" {
-		handleRoute(method, ctx.Request.Body(), ctx)
+		handleRoute(ctx)
 	} else {
 		log.Println("Unhandled route! ", requestURI)
 		util.WriteErrorToReq(ctx, fmt.Sprint("Could not find a route for ", requestURI))
@@ -38,7 +38,7 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 
 }
 
-func handleService(method string, body []byte, ctx *fasthttp.RequestCtx) {
+func handleService(ctx *fasthttp.RequestCtx) {
 	var arr []*model.Service
 	for item := range controller.GetAllServices() {
 		arr = append(arr, item)
@@ -57,11 +57,8 @@ func handleService(method string, body []byte, ctx *fasthttp.RequestCtx) {
 
 }
 
-func handleRoute(method string, body []byte, ctx *fasthttp.RequestCtx) {
-	var arr []*model.Route
-	for item := range controller.GetAllRoutes() {
-		arr = append(arr, item)
-	}
+func handleRoute(ctx *fasthttp.RequestCtx) {
+	arr := controller.GetAllRoutesCopy()
 	b, err := json.Marshal(arr)
 	if err != nil {
 		fmt.Println(err)
