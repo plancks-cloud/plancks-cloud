@@ -1,7 +1,16 @@
 # Planck's Cloud
 
 <p align="center">
-  <img src="docs/logo.png" width="64px" /> <img src="docs/logob.png" width="64px" />
+  <img src="docs/logo.png" width="64px" />
+  <img src="docs/logob.png" width="64px" />
+  <img src="docs/logo.png" width="64px" />
+  <img src="docs/logob.png" width="64px" />
+  <img src="docs/logo.png" width="64px" />
+  <img src="docs/logob.png" width="64px" />
+  <img src="docs/logo.png" width="64px" />
+  <img src="docs/logob.png" width="64px" />
+  <img src="docs/logo.png" width="64px" />
+  <img src="docs/logob.png" width="64px" />
 </p>
 
   
