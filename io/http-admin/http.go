@@ -2,7 +2,6 @@ package http_admin
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
 	"github.com/plancks-cloud/plancks-cloud/controller"
 	"github.com/plancks-cloud/plancks-cloud/model"
@@ -13,12 +12,7 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-var (
-	addr = flag.String("admin", ":6227", "TCP address to listen to")
-)
-
-func Startup() {
-	flag.Parse()
+func Startup(addr *string) {
 	if err := fasthttp.ListenAndServe(*addr, requestHandler); err != nil {
 		log.Fatalf("Error in ListenAndServe: %s", err)
 	}
