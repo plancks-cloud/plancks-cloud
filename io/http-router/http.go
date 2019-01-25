@@ -3,6 +3,7 @@ package http_router
 //Taken from from https://gist.github.com/bradfitz/1d7bdf12278d4d713212ce6c74875dab
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/plancks-cloud/plancks-cloud/model"
 	"github.com/plancks-cloud/plancks-cloud/util"
@@ -100,20 +101,21 @@ func newReverseProxyHandler(routes []model.Route, m map[string]*httputil.Reverse
 				return
 			}
 			errc := make(chan error, 1)
-			go func() {
-				n, err := io.Copy(be, br) // backend <- buffered reader
-				if err != nil {
-					err = fmt.Errorf("websocket: to copy backend from buffered reader: %v, %v", n, err)
-				}
-				errc <- err
-			}()
-			go func() {
-				n, err := io.Copy(c, be) // raw conn <- backend
-				if err != nil {
-					err = fmt.Errorf("websocket: to raw conn from backend: %v, %v", n, err)
-				}
-				errc <- err
-			}()
+			startWSReadWrite(&be, br, errc, &c)
+			//go func() {
+			//	n, err := io.Copy(be, br) // backend <- buffered reader
+			//	if err != nil {
+			//		err = fmt.Errorf("websocket: to copy backend from buffered reader: %v, %v", n, err)
+			//	}
+			//	errc <- err
+			//}()
+			//go func() {
+			//	n, err := io.Copy(c, be) // raw conn <- backend
+			//	if err != nil {
+			//		err = fmt.Errorf("websocket: to raw conn from backend: %v, %v", n, err)
+			//	}
+			//	errc <- err
+			//}()
 			if err := <-errc; err != nil {
 				log.Print(err)
 			}
@@ -127,4 +129,21 @@ func newReverseProxyHandler(routes []model.Route, m map[string]*httputil.Reverse
 		}
 		rp.ServeHTTP(w, r)
 	})
+}
+
+func startWSReadWrite(be *net.Conn, br *bufio.ReadWriter, errc chan error, c *net.Conn) {
+	go func() {
+		n, err := io.Copy(*be, br) // backend <- buffered reader
+		if err != nil {
+			err = fmt.Errorf("websocket: to copy backend from buffered reader: %v, %v", n, err)
+		}
+		errc <- err
+	}()
+	go func() {
+		n, err := io.Copy(*c, *be) // raw conn <- backend
+		if err != nil {
+			err = fmt.Errorf("websocket: to raw conn from backend: %v, %v", n, err)
+		}
+		errc <- err
+	}()
 }
