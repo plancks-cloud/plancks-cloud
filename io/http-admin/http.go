@@ -39,46 +39,41 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 }
 
 func handleService(method string, body []byte, ctx *fasthttp.RequestCtx) {
-	if method == http.MethodGet {
-		ch := controller.GetAllServices()
-		var arr []*model.Service
-		for item := range ch {
-			arr = append(arr, item)
-		}
-		b, err := json.Marshal(arr)
-		if err != nil {
-			fmt.Println(err)
-			util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
-			return
-		}
-		//Send back empty array not null
-		if len(arr) == 0 {
-			b = []byte("[]")
-		}
-		util.WriteJsonResponseToReq(ctx, http.StatusOK, b)
+	var arr []*model.Service
+	for item := range controller.GetAllServices() {
+		arr = append(arr, item)
 	}
+	b, err := json.Marshal(arr)
+	if err != nil {
+		fmt.Println(err)
+		util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
+		return
+	}
+	//Send back empty array not null
+	if len(arr) == 0 {
+		b = []byte("[]")
+	}
+	util.WriteJsonResponseToReq(ctx, http.StatusOK, b)
 
 }
 
 func handleRoute(method string, body []byte, ctx *fasthttp.RequestCtx) {
-	if method == http.MethodGet {
-		ch := controller.GetAllRoutes()
-		var arr []*model.Route
-		for item := range ch {
-			arr = append(arr, item)
-		}
-		b, err := json.Marshal(arr)
-		if err != nil {
-			fmt.Println(err)
-			util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
-			return
-		}
-		//Send back empty array not null
-		if len(arr) == 0 {
-			b = []byte("[]")
-		}
-		util.WriteJsonResponseToReq(ctx, http.StatusOK, b)
+	var arr []*model.Route
+	for item := range controller.GetAllRoutes() {
+		arr = append(arr, item)
 	}
+	b, err := json.Marshal(arr)
+	if err != nil {
+		fmt.Println(err)
+		util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
+		return
+	}
+	//Send back empty array not null
+	if len(arr) == 0 {
+		b = []byte("[]")
+	}
+	util.WriteJsonResponseToReq(ctx, http.StatusOK, b)
+
 }
 
 func handleAny(method string, body []byte, ctx *fasthttp.RequestCtx) {
