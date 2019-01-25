@@ -21,3 +21,21 @@ go run application.go
 ./build-arm.sh
 ```
 
+# API
+
+The API listens on 6227 by default. This can be set by setting the `addr` ENV variable.
+
+## Insert or update an object
+HTTP **PUT** /apply
+```
+{
+	"type": "route",
+	"list": [
+		{
+			"id": "1",
+			"domainName": "team142.co.za",
+			"address": "192.168.88.24:9000"
+		}		
+	]
+}
+```
