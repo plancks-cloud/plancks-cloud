@@ -1,4 +1,4 @@
-# plancks-cloud
+# Planck's Cloud
 
-API Postman project
-https://www.getpostman.com/collections/ff8146c36af0d06f91d5
+<img src="https://goreportcard.com/badge/github.com/plancks-cloud/plancks-cloud"> &nbsp;
+
