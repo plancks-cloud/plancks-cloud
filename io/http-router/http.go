@@ -20,7 +20,7 @@ func Serve(listenAddr string, prev chan bool, routes []model.Route) chan bool {
 	if prev != nil {
 		fmt.Println("Stopping proxy server")
 		prev <- true
-		time.Sleep(250 * time.Millisecond) //Not sure how necessary this is...
+		time.Sleep(50 * time.Millisecond) //Not sure how necessary this is...
 	}
 	return startProxy(listenAddr, routes)
 }
