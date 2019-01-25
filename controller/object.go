@@ -46,5 +46,6 @@ func handleApplyServices(list json.RawMessage) (err error) {
 	if err != nil {
 		return
 	}
+	GetDesiredServiceStateAndFix() //BAD -- NOT SAFE
 	return
 }

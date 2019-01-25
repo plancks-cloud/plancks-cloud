@@ -12,6 +12,7 @@ func StartHealthServer() {
 
 	go func() {
 		for {
+			fmt.Println("⏰ Running health check")
 			GetDesiredServiceStateAndFix()
 			time.Sleep(60 * time.Second)
 		}
@@ -31,7 +32,9 @@ func GetDesiredServiceStateAndFix() {
 }
 
 func checkExistingServices(desiredServices chan *model.Service, foundServices []pcmodel.ServiceState) {
+	count := 0
 	for d := range desiredServices {
+		count++
 		found := false
 		for _, s := range foundServices {
 			if d.Name == s.Name {
@@ -45,5 +48,5 @@ func checkExistingServices(desiredServices chan *model.Service, foundServices []
 			}
 		}
 	}
-
+	fmt.Println("... health check tried to align ", count, " services")
 }
