@@ -8,19 +8,25 @@ import (
 	"time"
 )
 
+var healthDoorbell = make(chan bool)
+
 func StartHealthServer() {
 
 	go func() {
 		for {
-			log.Println("⏰ Running health check")
-			GetDesiredServiceStateAndFix()
-			time.Sleep(60 * time.Second)
+			select {
+			case <-healthDoorbell:
+				getDesiredServiceStateAndFix()
+			case <-time.After(60 * time.Second):
+				getDesiredServiceStateAndFix()
+			}
 		}
 	}()
 
 }
 
-func GetDesiredServiceStateAndFix() {
+func getDesiredServiceStateAndFix() {
+	log.Println("⏰ Running health check")
 	svcChan := GetAllServices()
 	dockerServices, err := pc_docker.GetAllServiceStates()
 	if err != nil {
