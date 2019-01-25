@@ -102,20 +102,6 @@ func newReverseProxyHandler(routes []model.Route, m map[string]*httputil.Reverse
 			}
 			errc := make(chan error, 1)
 			startWSReadWrite(&be, br, errc, &c)
-			//go func() {
-			//	n, err := io.Copy(be, br) // backend <- buffered reader
-			//	if err != nil {
-			//		err = fmt.Errorf("websocket: to copy backend from buffered reader: %v, %v", n, err)
-			//	}
-			//	errc <- err
-			//}()
-			//go func() {
-			//	n, err := io.Copy(c, be) // raw conn <- backend
-			//	if err != nil {
-			//		err = fmt.Errorf("websocket: to raw conn from backend: %v, %v", n, err)
-			//	}
-			//	errc <- err
-			//}()
 			if err := <-errc; err != nil {
 				log.Print(err)
 			}

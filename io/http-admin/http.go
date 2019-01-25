@@ -33,8 +33,8 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 		handleRoute(method, ctx.Request.Body(), ctx)
 	} else {
 		log.Println("Unhandled route! ", requestURI)
+		util.WriteErrorToReq(ctx, fmt.Sprint("Could not find a route for ", requestURI))
 	}
-	util.WriteErrorToReq(ctx, fmt.Sprint("Could not find a route for ", requestURI))
 
 }
 
@@ -94,6 +94,7 @@ func handleApply(method string, body []byte, ctx *fasthttp.RequestCtx) {
 		}
 
 		ctx.Response.SetStatusCode(http.StatusOK)
+		ctx.Response.Header.Add("Content-type", "application/json")
 		ctx.Response.SetBody(model.OKMessage)
 
 	}
