@@ -19,9 +19,6 @@ func Startup(addr *string) {
 }
 
 func requestHandler(ctx *fasthttp.RequestCtx) {
-	log.Println(string(ctx.Method()))
-	log.Println(string(ctx.Request.RequestURI()))
-
 	method := string(ctx.Method())
 	requestURI := string(ctx.Request.RequestURI())
 
