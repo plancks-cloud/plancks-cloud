@@ -22,7 +22,7 @@
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://badges.mit-license.org)
 
 
-Planck's Cloud turns every home into a data center. Host your next project from your own home.
+Planck's Cloud turns every home into a data center. Host your next project from your own home with Planck's Cloud.
 
 
 # Running
