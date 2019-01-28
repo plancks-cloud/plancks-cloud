@@ -24,10 +24,13 @@
 
 Planck's Cloud turns every home into a data center. Host your next project from your own home with Planck's Cloud.
 
+# Road map
+
+ <img src="docs/pc-plan.png" />
 
 # Running
 
-```
+```bash
 git clone https://github.com/plancks-cloud/plancks-cloud.git
 go mod download
 go mod vendor
@@ -37,7 +40,7 @@ go run application.go
 
 # Building for Arm
 
-```
+```bash
 ./build-arm.sh
 ```
 
@@ -47,7 +50,7 @@ The API listens on :6227 by default. This can be set by setting the `addr` ENV v
 
 ## Routes
 PUT http://HOST:6227/apply
-```
+```json
 {
 	"type": "route",
 	"list": [
@@ -62,7 +65,7 @@ PUT http://HOST:6227/apply
 
 ## Services
 PUT http://HOST:6227/apply
-```
+```json
 {
 	"type": "service",
 	"list": [
