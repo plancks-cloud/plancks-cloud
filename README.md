@@ -26,63 +26,19 @@
 
 Planck's Cloud turns every home into a data center. Host your next project from your own home with Planck's Cloud.
 
-# Road map
+# Architecture
 
- <img src="docs/pc-plan.png" />
+TBA
 
-# Running
+# Installation
 
-```bash
-git clone https://github.com/plancks-cloud/plancks-cloud.git
-go mod download
-go mod vendor
-go run application.go
-
-```
-
-# Building for Arm
-
-```bash
-./build-arm.sh
-```
-
-# API
-
-The API listens on :6227 by default. This can be set by setting the `addr` ENV variable.
-
-## Routes
-PUT http://HOST:6227/apply
-```json
-{
-	"type": "route",
-	"list": [
-		{
-			"id": "1",
-			"domainName": "team142.co.za",
-			"address": "192.168.88.24:9000"
-		}		
-	]
-}
-```
-
-## Services
-PUT http://HOST:6227/apply
-```json
-{
-	"type": "service",
-	"list": [
-		{
-			"id": "1",
-			"name": "nginx1",
-			"image": "nginx:latest",
-			"replicas": 1,
-			"memoryLimit": 32
-		}		
-	]
-}
-```
-
-# Proxy
-
-The API listens on :6228 by default. This can be set by setting the `proxy` ENV variable.
+## Pre-install
+- Buy a domain with DNS provided.
+- Point the DNS record at your public IP address.
+- Setup your DNS provider's DNS updater to keep up-to-date with your public IP address.
+- Give your "server" a static IP on the network.
+- Create a DST-NAT rule on your router to point at your servers's static IP address.
+- Install docker on your server.
+- Run `docker swarm init` on your server.
+- TBA
 
