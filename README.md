@@ -27,7 +27,7 @@ Planck's Cloud turns every home into a data center. Host your next project from 
 
 Planck's Cloud allows you to run containers on your network at home and make endpoints available on the public Internet.
 
-A simple cli that allows you to quickly deploy or make changes to your home data center from another computer or a build server.
+A simple command line interface allows you to change things simply and quickly.
 
 
 # Architecture
