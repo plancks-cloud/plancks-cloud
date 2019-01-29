@@ -34,7 +34,7 @@ A simple cli that allows you to quickly deploy or make changes to your home data
 
 TBA
 
-# Installation
+# Setup
 
 ## Pre-install
 - Buy a domain with DNS provided.
@@ -47,7 +47,12 @@ TBA
 
 ## Installation
 ### Install the CLI
-- TBA
+Either
+- `go get github.com/plancks-cloud/plancks-cli`
+
+or 
+- Run installer at <a href="https://github.com/plancks-cloud/plancks-cli/releases">https://github.com/plancks-cloud/plancks-cli</a>
+
 ### Install the Daemon
 - TBA
 
