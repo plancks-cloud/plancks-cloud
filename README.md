@@ -21,10 +21,14 @@
 [![codebeat badge](https://codebeat.co/badges/25407218-e856-4f5e-ac7c-9d045dc0fe5a)](https://codebeat.co/projects/github-com-plancks-cloud-plancks-cloud-master)
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://badges.mit-license.org)
 
-
-
-
 Planck's Cloud turns every home into a data center. Host your next project from your own home with Planck's Cloud.
+
+# How it works
+
+Planck's Cloud allows you to run containers on your network at home and make endpoints available on the public Internet.
+
+A simple cli that allows you to quickly deploy or make changes to your home data center from another computer or a build server.
+
 
 # Architecture
 
@@ -40,5 +44,11 @@ TBA
 - Create a DST-NAT rule on your router to point at your servers's static IP address.
 - Install docker on your server.
 - Run `docker swarm init` on your server.
+
+## Installation
+### Install the CLI
 - TBA
+### Install the Daemon
+- TBA
+
 
