@@ -3,6 +3,7 @@ package model
 import "fmt"
 
 const RouteCollectionName = "Route"
+const RouteCollectionID = "id"
 
 type Route struct {
 	ID         string `json:"id"`

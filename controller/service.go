@@ -37,3 +37,14 @@ func InsertManyServices(l *[]model.Service) (err error) {
 	}
 	return
 }
+
+func DeleteManyServices(l *[]model.Service) (err error) {
+	for _, item := range *l {
+		_, err = mem.Delete(model.ServiceCollectionName, model.ServiceCollectionID, item.ID)
+		if err != nil {
+			logrus.Error(err)
+			return err
+		}
+	}
+	return
+}

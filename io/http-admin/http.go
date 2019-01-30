@@ -24,6 +24,8 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 
 	if requestURI == "/apply" {
 		handleApply(method, ctx.Request.Body(), ctx)
+	} else if requestURI == "/delete" {
+		handleDelete(method, ctx.Request.Body(), ctx)
 	} else if requestURI == "/service" {
 		handleService(ctx)
 	} else if requestURI == "/route" {
@@ -81,6 +83,31 @@ func handleApply(method string, body []byte, ctx *fasthttp.RequestCtx) {
 		}
 
 		err = controller.HandleApply(item)
+		if err != nil {
+			logrus.Println(err)
+			util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
+			return
+		}
+
+		ctx.Response.SetStatusCode(http.StatusOK)
+		ctx.Response.Header.Add("Content-type", "application/json")
+		ctx.Response.SetBody(model.OKMessage)
+
+	}
+
+}
+
+func handleDelete(method string, body []byte, ctx *fasthttp.RequestCtx) {
+	if method == http.MethodPost || method == http.MethodPut {
+		var item = &model.Object{}
+		err := json.Unmarshal(body, &item)
+		if err != nil {
+			logrus.Println(err)
+			util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
+			return
+		}
+
+		err = controller.HandleDelete(item)
 		if err != nil {
 			logrus.Println(err)
 			util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))

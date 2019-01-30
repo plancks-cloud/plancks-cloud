@@ -57,3 +57,14 @@ func RefreshProxy() {
 	http_router.StopServer(stop)
 	stop = http_router.Serve(*proxy, arr)
 }
+
+func DeleteManyRoutes(routes *[]model.Route) (err error) {
+	for _, route := range *routes {
+		_, err = mem.Delete(model.RouteCollectionName, model.RouteCollectionID, route.ID)
+		if err != nil {
+			logrus.Error(err)
+			return err
+		}
+	}
+	return
+}

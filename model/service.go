@@ -1,6 +1,7 @@
 package model
 
 const ServiceCollectionName = "Service"
+const ServiceCollectionID = "id"
 
 type Service struct {
 	ID          string `json:"id"`
