@@ -4,7 +4,6 @@ import (
 	"github.com/hashicorp/go-memdb"
 	"github.com/plancks-cloud/plancks-cloud/io/mem"
 	"github.com/plancks-cloud/plancks-cloud/model"
-	"github.com/plancks-cloud/plancks-docker/controller/pc-docker"
 	pc_model "github.com/plancks-cloud/plancks-docker/model"
 	"github.com/sirupsen/logrus"
 )
@@ -43,7 +42,6 @@ func InsertManyServices(l *[]model.Service) (err error) {
 func DeleteManyServices(l *[]model.Service) (err error) {
 	for _, item := range *l {
 		_, err = mem.Delete(model.ServiceCollectionName, model.ServiceCollectionID, item.ID)
-		pc_docker.DeleteServices(convertServices(l))
 		if err != nil {
 			logrus.Error(err)
 			return err

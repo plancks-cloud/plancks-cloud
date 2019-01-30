@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/plancks-cloud/plancks-cloud/model"
+	"github.com/plancks-cloud/plancks-docker/controller/pc-docker"
 	"github.com/sirupsen/logrus"
 )
 
@@ -13,9 +14,6 @@ func HandleApply(item *model.Object) (err error) {
 		return handleApplyRoutes(item.List)
 	} else if item.Type == "service" {
 		err = handleApplyServices(item.List)
-
-		//TODO: Call docker client ensure services are there and up to day
-
 	} else {
 		err = errors.New(fmt.Sprint("Unknown type for /apply object: ", item.Type))
 	}
@@ -97,6 +95,10 @@ func handleDeleteServices(list json.RawMessage) (err error) {
 	if err != nil {
 		logrus.Error(err)
 		return
+	}
+	err = pc_docker.DeleteServices(convertServices(s))
+	if err != nil {
+		logrus.Error("Failed to delete service: ", err)
 	}
 	healthDoorbell <- true //Ensures the health check runs
 	return
