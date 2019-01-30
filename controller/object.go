@@ -104,7 +104,7 @@ func handleDeleteServices(list json.RawMessage) (err error) {
 		logrus.Error(err)
 		return
 	}
-	err = pc_docker.DeleteServices(convertServices(s))
+	err = pc_docker.DeleteServices(convertServices(services))
 	if err != nil {
 		logrus.Error("Failed to delete service: ", err)
 	}
