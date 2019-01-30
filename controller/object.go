@@ -42,14 +42,19 @@ func handleApplyRoutes(list json.RawMessage) (err error) {
 
 }
 
+func rawToServices(list json.RawMessage) (routes *[]model.Service, err error) {
+	routes = &[]model.Service{}
+	err = json.Unmarshal(list, routes)
+	return
+}
+
 func handleApplyServices(list json.RawMessage) (err error) {
-	var s = &[]model.Service{}
-	err = json.Unmarshal(list, s)
+	services, err := rawToServices(list)
 	if err != nil {
 		logrus.Error(err)
 		return
 	}
-	err = InsertManyServices(s)
+	err = InsertManyServices(services)
 	if err != nil {
 		logrus.Error(err)
 		return
@@ -89,13 +94,12 @@ func handleDeleteRoutes(list json.RawMessage) (err error) {
 }
 
 func handleDeleteServices(list json.RawMessage) (err error) {
-	var s = &[]model.Service{}
-	err = json.Unmarshal(list, s)
+	services, err := rawToServices(list)
 	if err != nil {
 		logrus.Error(err)
 		return
 	}
-	err = DeleteManyServices(s)
+	err = DeleteManyServices(services)
 	if err != nil {
 		logrus.Error(err)
 		return
