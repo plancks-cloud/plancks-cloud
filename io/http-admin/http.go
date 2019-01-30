@@ -53,7 +53,6 @@ func handleService(ctx *fasthttp.RequestCtx) {
 		b = []byte("[]")
 	}
 	util.WriteJsonResponseToReq(ctx, http.StatusOK, b)
-
 }
 
 func handleRoute(ctx *fasthttp.RequestCtx) {
