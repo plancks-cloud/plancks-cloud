@@ -9,7 +9,10 @@ import (
 )
 
 var (
-	addr = flag.String("admin", ":6227", "TCP address to listen to")
+	addr       = flag.String("admin", ":6227", "TCP address to listen to")
+	persistID  = flag.String("persistID", "", "Persistence ID")
+	persistKey = flag.String("persistKey", "", "Persistence key")
+	persistUrl = flag.String("persistURL", "...", "Persistence URL")
 )
 
 func main() {
