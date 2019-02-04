@@ -19,6 +19,14 @@ func GetAllServices() (resp chan *model.Service) {
 
 }
 
+func GetAllServicesCopy() []model.Service {
+	var arr []model.Service
+	for item := range GetAllServices() {
+		arr = append(arr, *item)
+	}
+	return arr
+}
+
 func iteratorToManyServices(iterator memdb.ResultIterator, err error, out chan *model.Service) {
 	c := mem.IteratorToChannel(iterator, err)
 	for i := range c {
