@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"github.com/plancks-cloud/plancks-cloud/controller"
+	"github.com/plancks-cloud/plancks-cloud/io/gcp"
 	"github.com/plancks-cloud/plancks-cloud/io/http-admin"
 	"github.com/plancks-cloud/plancks-cloud/io/mem"
 	"github.com/sirupsen/logrus"
@@ -18,6 +19,13 @@ var (
 func main() {
 	flag.Parse()
 	logrus.Println("☁️☁️☁️ Planck's Cloud is starting ☁️☁️☁️")
+
+	cred := gcp.Cred{
+		URL: persistUrl,
+		ID:  persistID,
+		Key: persistKey,
+	}
+	controller.StartupSync(cred)
 
 	logrus.Println("...️ starting in-memory DB")
 	mem.Init()
