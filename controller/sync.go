@@ -7,12 +7,12 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func StartupSync(cred gcp.Cred) {
+func StartupSync(cred *gcp.Cred) {
 	syncServicesDown(cred)
 	syncRoutesDown(cred)
 }
 
-func syncRoutesDown(cred gcp.Cred) {
+func syncRoutesDown(cred *gcp.Cred) {
 	r, err := gcp.GetCollection(*cred.URL, *cred.ID, *cred.Key, model.RouteCollectionName)
 	if err != nil {
 		logrus.Error(err)
@@ -53,7 +53,7 @@ func syncRoutesUp(endpoint, id, key string) {
 
 }
 
-func syncServicesDown(cred gcp.Cred) {
+func syncServicesDown(cred *gcp.Cred) {
 	r, err := gcp.GetCollection(*cred.URL, *cred.ID, *cred.Key, model.ServiceCollectionName)
 	if err != nil {
 		logrus.Error(err)

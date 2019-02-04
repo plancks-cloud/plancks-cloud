@@ -20,11 +20,8 @@ func main() {
 	flag.Parse()
 	logrus.Println("☁️☁️☁️ Planck's Cloud is starting ☁️☁️☁️")
 
-	cred := gcp.Cred{
-		URL: persistUrl,
-		ID:  persistID,
-		Key: persistKey,
-	}
+	cred := getCreds()
+	logrus.Println("...️ pulling down state")
 	controller.StartupSync(cred)
 
 	logrus.Println("...️ starting in-memory DB")
@@ -36,4 +33,12 @@ func main() {
 	logrus.Println("...️ starting api")
 	http_admin.Startup(addr)
 
+}
+
+func getCreds() *gcp.Cred {
+	return &gcp.Cred{
+		URL: persistUrl,
+		ID:  persistID,
+		Key: persistKey,
+	}
 }
