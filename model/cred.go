@@ -1,4 +1,4 @@
-package gcp
+package model
 
 type Cred struct {
 	URL *string

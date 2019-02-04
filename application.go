@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"github.com/plancks-cloud/plancks-cloud/controller"
-	"github.com/plancks-cloud/plancks-cloud/io/gcp"
 	"github.com/plancks-cloud/plancks-cloud/io/http-admin"
 	"github.com/plancks-cloud/plancks-cloud/io/mem"
+	"github.com/plancks-cloud/plancks-cloud/model"
 	"github.com/sirupsen/logrus"
 )
 
@@ -35,8 +35,8 @@ func main() {
 
 }
 
-func getCreds() *gcp.Cred {
-	return &gcp.Cred{
+func getCreds() *model.Cred {
+	return &model.Cred{
 		URL: persistUrl,
 		ID:  persistID,
 		Key: persistKey,
