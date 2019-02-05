@@ -21,13 +21,28 @@
 [![codebeat badge](https://codebeat.co/badges/25407218-e856-4f5e-ac7c-9d045dc0fe5a)](https://codebeat.co/projects/github-com-plancks-cloud-plancks-cloud-master)
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://badges.mit-license.org)
 
-Planck's Cloud turns every home into a data center. Host your next project from your own home with Planck's Cloud.
+# What is Plancks Cloud?
+
+Planck's Cloud is a private or public cloud that aims to turn every home into a datacenter. Host your next project from your own home with Planck's Cloud.
 
 # How it works
 
 Planck's Cloud allows you to run containers on your network at home and make endpoints available on the public Internet.
 
 A simple command line interface allows you to change things simply and quickly.
+
+# What can Plancks Cloud do?
+
+- Pool all your computing resources together to power more intensive operations.
+- Share your computing resources with your friends and families who would like their own computing cloud for their own little projects 
+- Allows you the freedom, flexibility and control to setup your own cloud infrastructure
+- Use old and outdated hardware to dedicate more resources for your plancks cloud infrastructure
+- Planck's cloud will utilize resouces at efficiently rate by eliminating overheads which is not required.
+- Gives you the flexibility to deploy your applications to your network with minimal time and effort.
+
+# Current Status for Plancks Cloud?
+
+Currently the plan for Planck's Cloud is to make it possible for anyone and everyone to be able to easily spin up their own Planck's Cloud network from any hardware that is available, and use it to run their projects.
 
 
 # Architecture
@@ -56,4 +71,8 @@ or
 ### Install the Daemon
 - TBA
 
+# Getting Involved
 
+We're dieing to hear what you think about Plancks Cloud, do you like it? do you wish it actually worked? do you want help setting it up? did it help you? or did you want to help us instead?
+
+We're so open to the thoughts and comments, feel free to send us a message via the different channels on github, or via our email justin@plancks.cloud .
