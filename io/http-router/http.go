@@ -83,7 +83,6 @@ func Serve(listenAddr string, routes []model.Route) (stop chan bool) {
 func describeSSL(routes []model.Route) (email string, hosts []string) {
 	logrus.Infoln("describeSSL received ", len(routes), " routes")
 	for _, r := range routes {
-		logrus.Infoln(r.SSL.Accept)
 		if r.SSL.Accept {
 			email = r.SSL.Email
 			hosts = append(hosts, r.DomainName)

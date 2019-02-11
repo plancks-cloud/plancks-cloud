@@ -34,6 +34,7 @@ func GetAllRoutesCopy() []model.Route {
 
 func InsertManyRoutes(routes *[]model.Route) (err error) {
 	for _, route := range *routes {
+		logrus.Infoln("Upserting", route.ID, route.DomainName)
 		err = Upsert(&route)
 		if err != nil {
 			logrus.Error(err)
