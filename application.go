@@ -13,14 +13,14 @@ var (
 	addr       = flag.String("admin", ":6227", "TCP address to listen to")
 	persistID  = flag.String("persistID", "", "Persistence ID")
 	persistKey = flag.String("persistKey", "", "Persistence key")
-	persistUrl = flag.String("persistURL", "...", "Persistence URL")
+	persistUrl = flag.String("persistURL", "", "Persistence URL")
 )
 
 func main() {
 	flag.Parse()
 	logrus.Println("☁️☁️☁️ Planck's Cloud is starting ☁️☁️☁️")
 
-	cred := getCreds()
+	cred := getCredentials()
 	logrus.Println("...️ pulling down state")
 	controller.StartupSync(cred)
 
@@ -35,7 +35,7 @@ func main() {
 
 }
 
-func getCreds() *model.Cred {
+func getCredentials() *model.Cred {
 	return &model.Cred{
 		URL: persistUrl,
 		ID:  persistID,
