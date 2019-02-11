@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	proxy = flag.String("proxy", ":6228", "TCP address to listen to")
+	proxy = flag.String("proxy", ":80", "TCP address to listen to")
 	stop  chan bool
 )
 
