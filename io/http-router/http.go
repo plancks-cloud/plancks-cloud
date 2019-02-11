@@ -5,6 +5,7 @@ package http_router
 import (
 	"bufio"
 	"fmt"
+	"github.com/mholt/certmagic"
 	"github.com/plancks-cloud/plancks-cloud/model"
 	"github.com/plancks-cloud/plancks-cloud/util"
 	"github.com/sirupsen/logrus"
@@ -30,18 +31,45 @@ func Serve(listenAddr string, routes []model.Route) (stop chan bool) {
 	logrus.Println("Starting proxy server")
 	stop = make(chan bool)
 
-	l, err := net.Listen("tcp", listenAddr)
+	listenHTTP, err := net.Listen("tcp", listenAddr)
 	if err != nil {
 		logrus.Println(err)
 	}
 
+	email, hosts := describeSSL(routes)
+	magic := certmagic.New(certmagic.Config{
+		CA:     certmagic.LetsEncryptProductionCA,
+		Email:  email,
+		Agreed: true,
+	})
+
+	listenTLS, err := certmagic.Listen(hosts)
+
+	err = magic.Manage(hosts)
+	if err != nil {
+		logrus.Println(fmt.Errorf(err.Error()))
+	}
+
 	m := newReverseProxyMap(routes)
 	go func() {
-		_ = http.Serve(l, newReverseProxyHandler(routes, m))
+		_ = http.Serve(listenHTTP, newReverseProxyHandler(routes, m, magic))
+	}()
+	go func() {
+		if len(hosts) == 0 {
+			return
+		}
+		err = http.Serve(listenTLS, newReverseProxyHandler(routes, m, magic))
+		if err != nil {
+			logrus.Println(fmt.Errorf(err.Error()))
+		}
 	}()
 	go func() {
 		<-stop
-		err = l.Close()
+		err = listenHTTP.Close()
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		err = listenTLS.Close()
 		if err != nil {
 			logrus.Fatal(err)
 		}
@@ -52,7 +80,21 @@ func Serve(listenAddr string, routes []model.Route) (stop chan bool) {
 
 }
 
+func describeSSL(routes []model.Route) (email string, hosts []string) {
+	logrus.Infoln("describeSSL received ", len(routes), " routes")
+	for _, r := range routes {
+		logrus.Infoln(r.SSL.Accept)
+		if r.SSL.Accept {
+			email = r.SSL.Email
+			hosts = append(hosts, r.DomainName)
+		}
+	}
+	logrus.Infoln("describeSSL returning ", len(hosts), " routes")
+	return
+}
+
 func newReverseProxyMap(routes []model.Route) map[string]*httputil.ReverseProxy {
+	logrus.Infoln("newReverseProxyMap received ", len(routes), " routes")
 	m := make(map[string]*httputil.ReverseProxy)
 	for _, route := range routes {
 		u, err := url.Parse(route.GetHttpAddress())
@@ -60,14 +102,22 @@ func newReverseProxyMap(routes []model.Route) map[string]*httputil.ReverseProxy 
 			logrus.Println(err)
 			//TODO: check this before it gets here?
 		}
+		logrus.Infoln("newReverseProxyMap setting", route.DomainName)
 		m[route.DomainName] = httputil.NewSingleHostReverseProxy(u)
 	}
+	logrus.Infoln("newReverseProxyMap returning", len(m), "rps")
 	return m
 
 }
 
-func newReverseProxyHandler(routes []model.Route, m map[string]*httputil.ReverseProxy) http.Handler {
+func newReverseProxyHandler(routes []model.Route, m map[string]*httputil.ReverseProxy, magic *certmagic.Config) http.Handler {
+	logrus.Println("Hosts known before: ", len(m))
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if magic.HandleHTTPChallenge(w, r) {
+			return // challenge handled; nothing else to do
+		}
+
 		hj, isHJ := w.(http.Hijacker)
 		if r.Header.Get("Upgrade") == "websocket" && isHJ {
 			handleHiJackedWS(hj, r, w, routes)
@@ -76,6 +126,7 @@ func newReverseProxyHandler(routes []model.Route, m map[string]*httputil.Reverse
 		rp := m[util.HostOfURL(r.Host)]
 		if rp == nil {
 			logrus.Println("Could not find host: ", util.HostOfURL(r.Host))
+			logrus.Println("Hosts known: ", len(m))
 			//TODO: Send error
 			return
 		}
