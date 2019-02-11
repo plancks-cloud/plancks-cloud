@@ -8,6 +8,11 @@ import (
 )
 
 func StartupSync(cred *model.Cred) {
+	if len(*cred.ID) == 0 || len(*cred.URL) == 0 || len(*cred.Key) == 0 {
+		logrus.Info("Not enough parameters to sync to and from cloud. Ignoring.")
+		return
+	}
+
 	syncServicesDown(cred)
 	syncRoutesDown(cred)
 }
