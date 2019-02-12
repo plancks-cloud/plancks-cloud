@@ -89,19 +89,19 @@ func Serve(listenAddr string, routes []model.Route) (stop chan bool) {
 }
 
 func describeSSL(routes []model.Route) (email string, hosts []string) {
-	logrus.Infoln("describeSSL received ", len(routes), " routes")
+	logrus.Debugln("describeSSL received ", len(routes), " routes")
 	for _, r := range routes {
 		if r.SSL.Accept {
 			email = r.SSL.Email
 			hosts = append(hosts, r.DomainName)
 		}
 	}
-	logrus.Infoln("describeSSL returning ", len(hosts), " routes")
+	logrus.Debugln("describeSSL returning ", len(hosts), " routes")
 	return
 }
 
 func newReverseProxyMap(routes []model.Route) map[string]*httputil.ReverseProxy {
-	logrus.Infoln("newReverseProxyMap received ", len(routes), " routes")
+	logrus.Debugln("newReverseProxyMap received ", len(routes), " routes")
 	m := make(map[string]*httputil.ReverseProxy)
 	for _, route := range routes {
 		u, err := url.Parse(route.GetHttpAddress())
@@ -109,16 +109,16 @@ func newReverseProxyMap(routes []model.Route) map[string]*httputil.ReverseProxy 
 			logrus.Println(err)
 			//TODO: check this before it gets here?
 		}
-		logrus.Infoln("newReverseProxyMap setting", route.DomainName)
+		logrus.Debugln("newReverseProxyMap setting", route.DomainName)
 		m[route.DomainName] = httputil.NewSingleHostReverseProxy(u)
 	}
-	logrus.Infoln("newReverseProxyMap returning", len(m), "rps")
+	logrus.Debugln("newReverseProxyMap returning", len(m), "rps")
 	return m
 
 }
 
 func newReverseProxyHandler(routes []model.Route, m map[string]*httputil.ReverseProxy, magic *certmagic.Config) http.Handler {
-	logrus.Println("Hosts known before: ", len(m))
+	logrus.Debugln("Hosts known before: ", len(m))
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if magic.HandleHTTPChallenge(w, r) {
