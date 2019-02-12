@@ -32,7 +32,7 @@ func handleApplyRoutes(list json.RawMessage) (err error) {
 		logrus.Error(err)
 		return
 	}
-	logrus.Infoln("Inserting ", len(*routes), " routes")
+	logrus.Infoln("Inserting", len(*routes), "routes")
 	err = InsertManyRoutes(routes)
 	if err != nil {
 		logrus.Error(err)
