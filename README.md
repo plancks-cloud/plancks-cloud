@@ -16,7 +16,6 @@
 <a href="https://trello.com/b/NutXeZwS/plancks-roadmap"><img src="https://img.shields.io/badge/Roadmap-Trello-brightgreen.svg" /></a>
 <a href="https://coggle.it/diagram/XEgmhoO3UopF8htc/t/logo"><img src="https://img.shields.io/badge/Ideas-Coggle-brightgreen.svg" /></a>
 <br />
-<a href="https://trello.com/b/qUhkgyzs/plancks-backlog"><img src="https://img.shields.io/badge/Backlog-Trello-brightgreen.svg" /></a><br />
 
 <img src="https://goreportcard.com/badge/github.com/plancks-cloud/plancks-cloud">
 <a href="https://codeclimate.com/github/plancks-cloud/plancks-cloud/maintainability"><img src="https://api.codeclimate.com/v1/badges/81aff827de3938808c2d/maintainability" /></a>
