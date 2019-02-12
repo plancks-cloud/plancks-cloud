@@ -75,11 +75,11 @@ func Serve(listenAddr string, routes []model.Route) (stop chan bool) {
 		<-stop
 		err = listenHTTP.Close()
 		if err != nil {
-			logrus.Fatal(err)
+			logrus.Error(err)
 		}
 		err = listenTLS.Close()
 		if err != nil {
-			logrus.Fatal(err)
+			logrus.Error(err)
 		}
 		close(stop)
 
