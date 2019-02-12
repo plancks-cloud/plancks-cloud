@@ -50,7 +50,6 @@ func iteratorToManyRoutes(iterator memdb.ResultIterator, err error, out chan *mo
 		item := i.(*model.Route)
 		out <- item
 	}
-
 }
 
 func RefreshProxy() {
