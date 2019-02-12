@@ -63,4 +63,4 @@ or
 
 We're dieing to hear what you think about Plancks Cloud, do you like it? do you wish it actually worked? do you want help setting it up? did it help you? or did you want to help us instead?
 
-We're so open to the thoughts and comments, feel free to send us a message via the different channels on github, or via our email justin@plancks.cloud .
+We're so open to the thoughts and comments, feel free to open an issue on this repository.
