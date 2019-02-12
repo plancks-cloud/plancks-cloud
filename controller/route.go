@@ -15,8 +15,8 @@ var (
 	stop  chan bool
 )
 
-func GetAllRoutes() (resp chan *model.Route) {
-	resp = make(chan *model.Route)
+func GetAllRoutes() (resp chan model.Route) {
+	resp = make(chan model.Route)
 	go func() {
 		ite, err := mem.GetAll(model.RouteCollectionName)
 		iteratorToManyRoutes(ite, err, resp)
@@ -28,15 +28,15 @@ func GetAllRoutes() (resp chan *model.Route) {
 func GetAllRoutesCopy() []model.Route {
 	var arr []model.Route
 	for item := range GetAllRoutes() {
-		arr = append(arr, *item)
+		arr = append(arr, item)
 	}
 	return arr
 }
 
 func InsertManyRoutes(routes *[]model.Route) (err error) {
 	for _, route := range *routes {
-		logrus.Infoln("Upserting", route.ID, route.DomainName)
-		err = Upsert(&route)
+		cRoute := route //Seems redundant - it's not. Pointers be crazy
+		err = mem.Push(&cRoute)
 		if err != nil {
 			logrus.Error(err)
 			return err
@@ -45,7 +45,7 @@ func InsertManyRoutes(routes *[]model.Route) (err error) {
 	return
 }
 
-func iteratorToManyRoutes(iterator memdb.ResultIterator, err error, out chan *model.Route) {
+func iteratorToManyRoutes(iterator memdb.ResultIterator, err error, out chan model.Route) {
 	if err != nil {
 		logrus.Error(err.Error())
 		return
@@ -62,7 +62,7 @@ func iteratorToManyRoutes(iterator memdb.ResultIterator, err error, out chan *mo
 			continue
 		}
 		item := next.(*model.Route)
-		out <- item
+		out <- *item
 		count++
 	}
 	logrus.Debugln(fmt.Sprintf("Route iterator counts: %d", count))

@@ -10,7 +10,7 @@ import (
 func TestGetAllRoutesCopy(t *testing.T) {
 	mem.Init()
 	r := model.Route{ID: "1", DomainName: "test.com", Address: "1"}
-	err := Upsert(&r)
+	err := mem.Push(&r)
 	if err != nil {
 		t.Error(err)
 	}
@@ -31,13 +31,13 @@ func TestGetAllRoutesCopy(t *testing.T) {
 func TestGetAllRoutesCopyTwoItems(t *testing.T) {
 	mem.Init()
 	r := model.Route{ID: "1", DomainName: "test.com", Address: "1"}
-	err := Upsert(&r)
+	err := mem.Push(&r)
 	if err != nil {
 		t.Error(err)
 	}
 
 	r = model.Route{ID: "2", DomainName: "test2.com", Address: "2"}
-	err = Upsert(&r)
+	err = mem.Push(&r)
 	if err != nil {
 		t.Error(err)
 	}
