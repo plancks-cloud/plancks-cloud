@@ -14,11 +14,7 @@
 </p>
 
 <a href="https://trello.com/b/NutXeZwS/plancks-roadmap"><img src="https://img.shields.io/badge/Roadmap-Trello-brightgreen.svg" /></a>
-<a href="https://coggle.it/diagram/XEgmhoO3UopF8htc/t/logo"><img src="https://img.shields.io/badge/Ideas-Coggle-brightgreen.svg" /></a>
-<br />
-
-<img src="https://goreportcard.com/badge/github.com/plancks-cloud/plancks-cloud">
-<a href="https://codeclimate.com/github/plancks-cloud/plancks-cloud/maintainability"><img src="https://api.codeclimate.com/v1/badges/81aff827de3938808c2d/maintainability" /></a>
+<a href="https://coggle.it/diagram/XEgmhoO3UopF8htc/t/logo"><img src="https://img.shields.io/badge/Ideas-Coggle-brightgreen.svg" /></a><br />
 [![codebeat badge](https://codebeat.co/badges/25407218-e856-4f5e-ac7c-9d045dc0fe5a)](https://codebeat.co/projects/github-com-plancks-cloud-plancks-cloud-master)
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://badges.mit-license.org)
 
@@ -46,7 +42,9 @@ A simple command line interface allows you to change things simply and quickly.
 Currently the plan for Planck's Cloud is to make it possible for anyone and everyone to be able to easily spin up their own Planck's Cloud network from any hardware that is available, and use it to run their projects.
 
 
-# Architecture
+# Architecture and Design
+<img src="https://goreportcard.com/badge/github.com/plancks-cloud/plancks-cloud">
+<a href="https://codeclimate.com/github/plancks-cloud/plancks-cloud/maintainability"><img src="https://api.codeclimate.com/v1/badges/81aff827de3938808c2d/maintainability" /></a>
 
 TBA
 
