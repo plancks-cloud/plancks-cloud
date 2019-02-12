@@ -1,25 +1,8 @@
 # Planck's Cloud
+<img align="right" width="290" height="290" src="docs/logo.png" />
 
-<p align="center">
-  <img src="docs/logo.png" width="64px" />
-  <img src="docs/logob.png" width="64px" />
-  <img src="docs/logo.png" width="64px" />
-  <img src="docs/logob.png" width="64px" />
-  <img src="docs/logo.png" width="64px" />
-  <img src="docs/logob.png" width="64px" />
-  <img src="docs/logo.png" width="64px" />
-  <img src="docs/logob.png" width="64px" />
-  <img src="docs/logo.png" width="64px" />
-  <img src="docs/logob.png" width="64px" />
-</p>
-
-
-<a href="https://coggle.it/diagram/XEgmhoO3UopF8htc/t/logo"><img src="https://img.shields.io/badge/Ideas-Coggle-brightgreen.svg" /></a>
-<img src="https://europe-west1-captains-badges.cloudfunctions.net/function-clone-badge-pc?project=plancks-cloud/plancks-cloud" />
-<img src="https://goreportcard.com/badge/github.com/plancks-cloud/plancks-cloud">
-<a href="https://codeclimate.com/github/plancks-cloud/plancks-cloud/maintainability"><img src="https://api.codeclimate.com/v1/badges/81aff827de3938808c2d/maintainability" /></a>
-[![codebeat badge](https://codebeat.co/badges/25407218-e856-4f5e-ac7c-9d045dc0fe5a)](https://codebeat.co/projects/github-com-plancks-cloud-plancks-cloud-master)
-[![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://badges.mit-license.org)
+[![](https://images.microbadger.com/badges/version/planckscloud/plancks-cloud.svg)](https://microbadger.com/images/planckscloud/plancks-cloud "Get your own version badge on microbadger.com")&nbsp;<a href="https://trello.com/b/NutXeZwS/plancks-roadmap"><img src="https://img.shields.io/badge/Roadmap-Trello-brightgreen.svg" /></a>
+<a href="https://coggle.it/diagram/XEgmhoO3UopF8htc/t/logo"><img src="https://img.shields.io/badge/Ideas-Coggle-brightgreen.svg" /></a>&nbsp;[![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://badges.mit-license.org)
 
 # What is Plancks Cloud?
 
@@ -45,11 +28,14 @@ A simple command line interface allows you to change things simply and quickly.
 Currently the plan for Planck's Cloud is to make it possible for anyone and everyone to be able to easily spin up their own Planck's Cloud network from any hardware that is available, and use it to run their projects.
 
 
-# Architecture
+# Architecture and Design
+<img src="https://goreportcard.com/badge/github.com/plancks-cloud/plancks-cloud">&nbsp;<a href="https://codeclimate.com/github/plancks-cloud/plancks-cloud/maintainability"><img src="https://api.codeclimate.com/v1/badges/81aff827de3938808c2d/maintainability" /></a>&nbsp;[![codebeat badge](https://codebeat.co/badges/25407218-e856-4f5e-ac7c-9d045dc0fe5a)](https://codebeat.co/projects/github-com-plancks-cloud-plancks-cloud-master)
 
 TBA
 
 # Setup
+[![Docker Pulls](https://img.shields.io/docker/pulls/planckscloud/plancks-cloud.svg?maxAge=86400)](https://hub.docker.com/r/planckscloud/plancks-cloud)
+<img src="https://europe-west1-captains-badges.cloudfunctions.net/function-clone-badge-pc?project=plancks-cloud/plancks-cloud" /><br />
 
 ## Pre-install
 - Buy a domain with DNS provided.
@@ -75,4 +61,4 @@ or
 
 We're dieing to hear what you think about Plancks Cloud, do you like it? do you wish it actually worked? do you want help setting it up? did it help you? or did you want to help us instead?
 
-We're so open to the thoughts and comments, feel free to send us a message via the different channels on github, or via our email justin@plancks.cloud .
+We're so open to the thoughts and comments, feel free to open an issue on this repository.
