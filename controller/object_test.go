@@ -101,9 +101,6 @@ func TestRawToRoutesMemStoreAndChannelBack(t *testing.T) {
 		t.Error(err)
 	}
 	routes := GetAllRoutes()
-	if len(routes) != 2 {
-		t.Error("Should have two routes!")
-	}
 
 	found1 := false
 	found2 := false
