@@ -31,10 +31,20 @@ func Serve(listenAddr string, routes []model.Route) (stop chan bool) {
 	logrus.Println("Starting proxy server")
 	stop = make(chan bool)
 
+	if len(routes) == 0 {
+		logrus.Println("No routes - not going to listen.")
+		return
+	}
+
+	//HTTP traffic
 	listenHTTP, err := net.Listen("tcp", listenAddr)
 	if err != nil {
 		logrus.Println(err)
 	}
+	m := newReverseProxyMap(routes)
+	go func() {
+		_ = http.Serve(listenHTTP, newReverseProxyHandler(routes, m, magic))
+	}()
 
 	email, hosts := describeSSL(routes)
 	magic := certmagic.New(certmagic.Config{
@@ -50,10 +60,6 @@ func Serve(listenAddr string, routes []model.Route) (stop chan bool) {
 		logrus.Println(fmt.Errorf(err.Error()))
 	}
 
-	m := newReverseProxyMap(routes)
-	go func() {
-		_ = http.Serve(listenHTTP, newReverseProxyHandler(routes, m, magic))
-	}()
 	go func() {
 		if len(hosts) == 0 {
 			return
