@@ -51,7 +51,7 @@ func TestRawToRoutes(t *testing.T) {
 	}
 }
 
-func TestRawToRoutesMemStore(t *testing.T) {
+func TestRawToRoutesMemStoreAndBackAgain(t *testing.T) {
 	mem.Init()
 
 	raw := (*json.RawMessage)(&routeData2)
@@ -72,6 +72,43 @@ func TestRawToRoutesMemStore(t *testing.T) {
 	found2 := false
 
 	for _, item := range routes {
+		if item.ID == "1" {
+			found1 = true
+		} else if item.ID == "2" {
+			found2 = true
+		}
+	}
+
+	if !found1 {
+		t.Error("Did not find route 1")
+	}
+	if !found2 {
+		t.Error("Did not find route 2")
+	}
+
+}
+
+func TestRawToRoutesMemStoreAndChannelBack(t *testing.T) {
+	mem.Init()
+
+	raw := (*json.RawMessage)(&routeData2)
+	r, err := RawToRoutes(*raw)
+	if err != nil {
+		t.Error(err)
+	}
+	err = InsertManyRoutes(r)
+	if err != nil {
+		t.Error(err)
+	}
+	routes := GetAllRoutes()
+	if len(routes) != 2 {
+		t.Error("Should have two routes!")
+	}
+
+	found1 := false
+	found2 := false
+
+	for item := range routes {
 		if item.ID == "1" {
 			found1 = true
 		} else if item.ID == "2" {

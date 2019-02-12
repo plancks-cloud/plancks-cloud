@@ -2,6 +2,7 @@ package controller
 
 import (
 	"flag"
+	"fmt"
 	"github.com/hashicorp/go-memdb"
 	"github.com/plancks-cloud/plancks-cloud/io/http-router"
 	"github.com/plancks-cloud/plancks-cloud/io/mem"
@@ -45,11 +46,26 @@ func InsertManyRoutes(routes *[]model.Route) (err error) {
 }
 
 func iteratorToManyRoutes(iterator memdb.ResultIterator, err error, out chan *model.Route) {
-	c := mem.IteratorToChannel(iterator, err)
-	for i := range c {
-		item := i.(*model.Route)
-		out <- item
+	if err != nil {
+		logrus.Error(err.Error())
+		return
 	}
+	if iterator == nil {
+		return
+	}
+	more := true
+	count := 0
+	for more {
+		next := iterator.Next()
+		if next == nil {
+			more = false
+			continue
+		}
+		item := next.(*model.Route)
+		out <- item
+		count++
+	}
+	logrus.Debugln(fmt.Sprintf("Route iterator counts: %d", count))
 }
 
 func RefreshProxy() {
