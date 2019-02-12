@@ -43,8 +43,7 @@ Currently the plan for Planck's Cloud is to make it possible for anyone and ever
 
 
 # Architecture and Design
-<img src="https://goreportcard.com/badge/github.com/plancks-cloud/plancks-cloud">
-<a href="https://codeclimate.com/github/plancks-cloud/plancks-cloud/maintainability"><img src="https://api.codeclimate.com/v1/badges/81aff827de3938808c2d/maintainability" /></a>
+<img src="https://goreportcard.com/badge/github.com/plancks-cloud/plancks-cloud"><a href="https://codeclimate.com/github/plancks-cloud/plancks-cloud/maintainability"><img src="https://api.codeclimate.com/v1/badges/81aff827de3938808c2d/maintainability" /></a>
 
 TBA
 
