@@ -20,14 +20,14 @@ func HandleApply(item *model.Object) (err error) {
 	return
 }
 
-func rawToRoutes(list json.RawMessage) (routes *[]model.Route, err error) {
+func RawToRoutes(list json.RawMessage) (routes *[]model.Route, err error) {
 	routes = &[]model.Route{}
 	err = json.Unmarshal(list, routes)
 	return
 }
 
 func handleApplyRoutes(list json.RawMessage) (err error) {
-	routes, err := rawToRoutes(list)
+	routes, err := RawToRoutes(list)
 	if err != nil {
 		logrus.Error(err)
 		return
@@ -80,7 +80,7 @@ func HandleDelete(item *model.Object) (err error) {
 }
 
 func handleDeleteRoutes(list json.RawMessage) (err error) {
-	routes, err := rawToRoutes(list)
+	routes, err := RawToRoutes(list)
 	if err != nil {
 		logrus.Error(err)
 		return
