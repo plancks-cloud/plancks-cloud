@@ -34,6 +34,7 @@ func StartupSync(persistPath *string) {
 	syncRoutesDown()
 }
 
+//Saves routes to memory DB
 func syncRoutesDown() {
 
 	configPath := GetPersistPath()
@@ -55,60 +56,38 @@ func syncRoutesDown() {
 
 }
 
-//func syncRoutesUp() {
-//	sl := GetAllRoutesCopy()
-//	b, err := json.Marshal(sl)
-//	if err != nil {
-//		logrus.Error(err)
-//		return
-//	}
-//	r, err := gcp.SetCollection(endpoint, id, key, model.RouteCollectionName, b)
-//	if err != nil {
-//		logrus.Error(err)
-//		return
-//	}
-//	msg := string(r)
-//	logrus.Println(msg)
-//
-//}
-//
-//func syncServicesDown() {
-//	r, err := gcp.GetCollection(*cred.URL, *cred.ID, *cred.Key, model.ServiceCollectionName)
-//	if err != nil {
-//		logrus.Error(err)
-//		return
-//	}
-//
-//	var sl *[]model.Service
-//	err = json.Unmarshal(r, sl)
-//	if err != nil {
-//		logrus.Error(err)
-//		return
-//	}
-//
-//	if len(*sl) > 0 {
-//		err = InsertManyServices(sl)
-//		if err != nil {
-//			logrus.Error(err)
-//			return
-//		}
-//	}
-//
-//}
-//
-//func syncServicesUp() {
-//	sl := GetAllRoutesCopy()
-//	b, err := json.Marshal(sl)
-//	if err != nil {
-//		logrus.Error(err)
-//		return
-//	}
-//	r, err := gcp.SetCollection(endpoint, id, key, model.RouteCollectionName, b)
-//	if err != nil {
-//		logrus.Error(err)
-//		return
-//	}
-//	msg := string(r)
-//	logrus.Println(msg)
-//
-//}
+//Saves routes to disk
+func syncRoutesUp() {
+
+	//Check if feature is on
+	c := GetConfig(model.PersistPath)
+	if c.ID == "" || c.Val == "" {
+		logrus.Infoln("No persist path. No syncing.")
+		return
+	}
+
+	//Get routes -> json -> []byte
+	routes := GetAllRoutesCopy()
+	b, err := json.Marshal(&routes)
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
+
+	configPath := GetPersistPath()
+	file := fmt.Sprint(configPath, "/", model.RouteCollectionName, ".json")
+
+	//Delete file
+	err = os.Remove(file)
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
+
+	//Save file
+	err = ioutil.WriteFile(file, b, 0644)
+	if err != nil {
+		logrus.Error(err)
+	}
+
+}
