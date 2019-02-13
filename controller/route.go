@@ -42,6 +42,7 @@ func InsertManyRoutes(routes *[]model.Route) (err error) {
 			return err
 		}
 	}
+	syncRoutesUp()
 	return
 }
 

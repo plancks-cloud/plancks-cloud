@@ -38,7 +38,7 @@ func StartupSync(persistPath *string) {
 func syncRoutesDown() {
 
 	configPath := GetPersistPath()
-	file := fmt.Sprint(configPath, "/", model.RouteCollectionName, ".json")
+	file := fmt.Sprint(configPath, "\\", model.RouteCollectionName, ".json")
 	if _, err := os.Stat(file); err == nil {
 		b, err := ioutil.ReadFile(file)
 		var arr []model.Route
@@ -75,7 +75,9 @@ func syncRoutesUp() {
 	}
 
 	configPath := GetPersistPath()
-	file := fmt.Sprint(configPath, "/", model.RouteCollectionName, ".json")
+	fmt.Println(configPath)
+	file := fmt.Sprint(configPath, "\\", model.RouteCollectionName, ".json")
+	fmt.Println(file)
 
 	//Delete file
 	err = os.Remove(file)

@@ -13,7 +13,10 @@ func SaveConfig(item *model.Config) error {
 }
 
 func GetPersistPath() string {
-	return fmt.Sprint(GetConfig(model.PersistPath), "/config")
+	c := GetConfig(model.PersistPath)
+	v := c.Val
+	fmt.Println(v)
+	return fmt.Sprint(v, "\\config")
 }
 
 func GetConfig(id string) (r model.Config) {

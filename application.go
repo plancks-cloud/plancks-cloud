@@ -10,7 +10,7 @@ import (
 
 var (
 	addr        = flag.String("admin", ":6227", "TCP address to listen to")
-	persistPath = flag.String("persistPath", "", "Persistence path")
+	persistPath = flag.String("persistPath", "C:\\tmp", "Persistence path")
 )
 
 func main() {
