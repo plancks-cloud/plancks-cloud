@@ -45,6 +45,7 @@ func InsertManyServices(l *[]model.Service) (err error) {
 			return err
 		}
 	}
+	syncRoutesToDisk()
 	return
 }
 
@@ -56,6 +57,7 @@ func DeleteManyServices(l *[]model.Service) (err error) {
 			return err
 		}
 	}
+	syncRoutesToDisk()
 	return
 }
 
