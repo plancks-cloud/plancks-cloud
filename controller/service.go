@@ -38,7 +38,8 @@ func iteratorToManyServices(iterator memdb.ResultIterator, err error, out chan *
 
 func InsertManyServices(l *[]model.Service) (err error) {
 	for _, item := range *l {
-		err = mem.Push(&item)
+		itemN := item
+		err = mem.Push(&itemN)
 		if err != nil {
 			logrus.Error(err)
 			return err
