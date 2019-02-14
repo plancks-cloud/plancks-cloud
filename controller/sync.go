@@ -2,11 +2,11 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/plancks-cloud/plancks-cloud/model"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 )
 
 func StartupSync(persistPath *string) {
@@ -31,14 +31,13 @@ func StartupSync(persistPath *string) {
 	}
 
 	//syncServicesDown()
-	syncRoutesDown()
+	syncRoutesFromDisk()
 }
 
 //Saves routes to memory DB
-func syncRoutesDown() {
+func syncRoutesFromDisk() {
 
-	configPath := GetPersistPath()
-	file := fmt.Sprint(configPath, "\\", model.RouteCollectionName, ".json")
+	file := filepath.ToSlash(filepath.Join(GetPersistPath(), model.RouteCollectionFileName))
 	if _, err := os.Stat(file); err == nil {
 		b, err := ioutil.ReadFile(file)
 		var arr []model.Route
@@ -52,12 +51,14 @@ func syncRoutesDown() {
 			logrus.Error(err)
 			return
 		}
+	} else {
+		logrus.Println("Routes json not found. Not loading any routes.")
 	}
 
 }
 
 //Saves routes to disk
-func syncRoutesUp() {
+func syncRoutesToDisk() {
 
 	//Check if feature is on
 	c := GetConfig(model.PersistPath)
@@ -74,17 +75,10 @@ func syncRoutesUp() {
 		return
 	}
 
-	configPath := GetPersistPath()
-	fmt.Println(configPath)
-	file := fmt.Sprint(configPath, "\\", model.RouteCollectionName, ".json")
-	fmt.Println(file)
+	file := filepath.ToSlash(filepath.Join(GetPersistPath(), model.RouteCollectionFileName))
 
 	//Delete file
-	err = os.Remove(file)
-	if err != nil {
-		logrus.Error(err)
-		return
-	}
+	os.Remove(file)
 
 	//Save file
 	err = ioutil.WriteFile(file, b, 0644)

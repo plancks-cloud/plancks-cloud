@@ -5,6 +5,7 @@ import (
 	"github.com/hashicorp/go-memdb"
 	"github.com/plancks-cloud/plancks-cloud/io/mem"
 	"github.com/plancks-cloud/plancks-cloud/model"
+	"github.com/plancks-cloud/plancks-cloud/util"
 	"github.com/sirupsen/logrus"
 )
 
@@ -15,8 +16,8 @@ func SaveConfig(item *model.Config) error {
 func GetPersistPath() string {
 	c := GetConfig(model.PersistPath)
 	v := c.Val
-	fmt.Println(v)
-	return fmt.Sprint(v, "\\config")
+	v = util.Append(v, "\\config")
+	return v
 }
 
 func GetConfig(id string) (r model.Config) {

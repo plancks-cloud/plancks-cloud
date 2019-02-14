@@ -42,7 +42,7 @@ func InsertManyRoutes(routes *[]model.Route) (err error) {
 			return err
 		}
 	}
-	syncRoutesUp()
+	syncRoutesToDisk()
 	return
 }
 
@@ -83,5 +83,6 @@ func DeleteManyRoutes(routes *[]model.Route) (err error) {
 			return err
 		}
 	}
+	syncRoutesToDisk()
 	return
 }
