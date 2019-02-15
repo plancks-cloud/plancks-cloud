@@ -4,34 +4,36 @@
 [![](https://images.microbadger.com/badges/version/planckscloud/plancks-cloud.svg)](https://microbadger.com/images/planckscloud/plancks-cloud "Get your own version badge on microbadger.com")&nbsp;<a href="https://trello.com/b/NutXeZwS/plancks-roadmap"><img src="https://img.shields.io/badge/Roadmap-Trello-brightgreen.svg" /></a>
 <a href="https://coggle.it/diagram/XEgmhoO3UopF8htc/t/logo"><img src="https://img.shields.io/badge/Ideas-Coggle-brightgreen.svg" /></a>&nbsp;[![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://badges.mit-license.org)
 
-# What is Plancks Cloud?
+# What is Planck's Cloud?
 
-Planck's Cloud is a private or public cloud that aims to turn every home into a datacenter. Host your next project from your own home with Planck's Cloud.
+Planck's Cloud aims to turn every home into a data center. Our goal is to allow you to host your next project from your own home with Planck's Cloud. We believe anyone should be able to run their side project from home.
 
 # How it works
 
-Planck's Cloud allows you to run containers on your network at home and make endpoints available on the public Internet.
+Planck's Cloud allows you to run containers on your network at home and make endpoints available on the public Internet. Traffic entering your network will be proxied to the relevant containers &amp; services. Planck's Cloud automatically configures LetsEncrypt TLS and is able to serve up traffic over HTTPS. 
 
-A simple command line interface allows you to change things simply and quickly.
+A simple command line interface allows you to change things on your servers and also to enable CI/CD pipelines.
 
-# What can Plancks Cloud do?
+# What can Planck's Cloud do?
 
-- Pool all your computing resources together to power more intensive operations.
-- Share your computing resources with your friends and families who would like their own computing cloud for their own little projects 
+- Host a website from home.
+- Host an API available for your next React, Vue or Angular app.
+- Run a database for your other services.
 - Allows you the freedom, flexibility and control to setup your own cloud infrastructure
-- Use old and outdated hardware to dedicate more resources for your plancks cloud infrastructure
-- Planck's cloud will utilize resouces at efficiently rate by eliminating overheads which is not required.
-- Gives you the flexibility to deploy your applications to your network with minimal time and effort.
+- Run your application in a configuration which would allow you to scale out at home or lift and shift to a cloud provider like AWS, GCP, Azure etc.
 
 # Current Status for Plancks Cloud?
 
-Currently the plan for Planck's Cloud is to make it possible for anyone and everyone to be able to easily spin up their own Planck's Cloud network from any hardware that is available, and use it to run their projects.
-
+The features currently available are:
+- Create, update and delete docker services.
+- Create routes for ingress. Route traffic for a hostname to a service or machine on your network.
+- SSL offloading. Expose endpoints with LetEncrypt provided HTTPS.
 
 # Architecture and Design
 <img src="https://goreportcard.com/badge/github.com/plancks-cloud/plancks-cloud">&nbsp;<a href="https://codeclimate.com/github/plancks-cloud/plancks-cloud/maintainability"><img src="https://api.codeclimate.com/v1/badges/81aff827de3938808c2d/maintainability" /></a>&nbsp;[![codebeat badge](https://codebeat.co/badges/25407218-e856-4f5e-ac7c-9d045dc0fe5a)](https://codebeat.co/projects/github-com-plancks-cloud-plancks-cloud-master)
 
-TBA
+<img align="center" width="800" src="docs/pc-arch.png" />
+
 
 # Setup
 [![Docker Pulls](https://img.shields.io/docker/pulls/planckscloud/plancks-cloud.svg?maxAge=86400)](https://hub.docker.com/r/planckscloud/plancks-cloud)
