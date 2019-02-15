@@ -47,7 +47,7 @@ See <a href="docs/setup.md">the Setup Guide</a> for installation instructions.
 
 - Buy a domain with DNS provided (Namecheap, Godaddy etc). You can use one you already own.
 - Point a DNS "A record" at your public IP address. To see your public IP open https://ifconfig.co/ in your browser.
-- *Optional* Setup your DNS provider's DNS updater to keep up-to-date with your public IP address.
+- *Optionally:* Setup your DNS provider's DNS updater to keep up-to-date with your public IP address.
 
 ## Deploying a docker container as a service
 
