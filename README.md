@@ -6,11 +6,11 @@
 
 # What is Planck's Cloud?
 
-Planck's Cloud aims to turn every home into a data center. Our goal is to allow you to host your next project from your own home with Planck's Cloud. We believe anyone should be able to run their side project from home.
+Have you ever wanted to build a tiny app and host it from home? Have you ever had a startup idea and wanted to deploy it within an hour? Planck's Cloud aims to make deploying and hosting your next idea from home a walk in the park.
 
 # How it works
 
-Planck's Cloud allows you to run containers on your network at home and make endpoints available on the public Internet. Traffic entering your network will be proxied to the relevant containers &amp; services. Planck's Cloud automatically configures LetsEncrypt TLS and is able to serve up traffic over HTTPS. 
+Planck's Cloud allows you to run containers on your home computer/s and make endpoints available on the public Internet. Traffic entering your network will be proxied to the relevant containers &amp; services. Planck's Cloud automatically configures LetsEncrypt TLS and is able to serve up traffic over HTTPS. 
 
 A simple command line interface allows you to change things on your servers and also to enable CI/CD pipelines.
 
