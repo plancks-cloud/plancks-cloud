@@ -6,13 +6,11 @@
 
 # What is Planck's Cloud?
 
-Have you ever wanted to build a tiny app and host it from home? Have you ever had a startup idea and wanted to deploy it within an hour? Planck's Cloud aims to make deploying and hosting your next idea from home a walk in the park.
+Have you ever wanted to build a tiny app and host it from home? Have you ever had a startup idea and wanted to deploy it within an hour? Planck's Cloud aims to make deploying, reverse proxying and HTTPS your next idea from home a walk in the park.
 
 # How it works
 
-Planck's Cloud allows you to run containers on your home computer/s and make endpoints available on the public Internet. Traffic entering your network will be proxied to the relevant containers &amp; services. Planck's Cloud automatically configures LetsEncrypt TLS and is able to serve up traffic over HTTPS. 
-
-A simple command line interface allows you to change things on your servers and also to enable CI/CD pipelines.
+Install Planck's Cloud onto a machine you want to use as a server. Install the CLI and start deploying! 
 
 # What can Planck's Cloud do?
 
