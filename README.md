@@ -35,7 +35,7 @@ Planck's Cloud runs is an Open Source Golang app that runs inside a docker conta
 <img align="center" width="800" src="docs/pc-arch.png" />
 
 
-# Setup
+# Installation
 [![Docker Pulls](https://img.shields.io/docker/pulls/planckscloud/plancks-cloud.svg?maxAge=86400)](https://hub.docker.com/r/planckscloud/plancks-cloud)
 <img src="https://europe-west1-captains-badges.cloudfunctions.net/function-clone-badge-pc?project=plancks-cloud/plancks-cloud" /><br />
 
@@ -43,7 +43,7 @@ See <a href="docs/setup.md">the Setup Guide</a> for installation instructions.
 
 # Deploying your first app
 ## Domain
-- Buy a domain with DNS provided.
+- Buy a domain with DNS provided (Namecheap, Godaddy etc). You can use one you already own.
 - Point a DNS "A record" at your public IP address. To see your public IP open your browser to https://ifconfig.co/
 - *Optional* Setup your DNS provider's DNS updater to keep up-to-date with your public IP address.
 ## Deploying a docker container as a service
