@@ -42,30 +42,56 @@ Planck's Cloud runs is an Open Source Golang app that runs inside a docker conta
 See <a href="docs/setup.md">the Setup Guide</a> for installation instructions.
 
 # Deploying your first app
+
 ## Domain
+
 - Buy a domain with DNS provided (Namecheap, Godaddy etc). You can use one you already own.
 - Point a DNS "A record" at your public IP address. To see your public IP open your browser to https://ifconfig.co/
 - *Optional* Setup your DNS provider's DNS updater to keep up-to-date with your public IP address.
+
 ## Deploying a docker container as a service
+
 - Define a service in service.json
 ```json
-{ 
-  "TBA": "..."
+{
+	"type": "service",
+	"list": [
+		{
+			"id": "my-nginx",
+			"name": "nginx",
+			"image": "nginx:latest",
+			"replicas": 1,
+			"memoryLimit": 32
+		}		
+	]
 }
 ```
+
 - Deploy the service
 
-Run in terminal or cmd `./plancks create -f service.json` (from the folder you created **service.json** in)
+Run in terminal or cmd `./plancks create -e localhost:6227 -f service.json` (from the folder you created **service.json** in). Replace localhost with the IP address of your server if it's no the machine you're running the cli from.
 
 - Define a route in route.json
+
+Change the domainName field to the domain you would like to use. 
+
 ```json
-{ 
-  "TBA": "..."
+{
+	"type": "route",
+	"list": [
+		{
+			"id": "nginx",
+			"domainName": "myheredomin.com",
+			"address": "nginx:80"
+		}		
+	]
 }
 ```
+
 - Deploy the route
 
-Run in terminal or cmd `./plancks create -f route.json` (from the folder you created **route.json** in)
+Run in terminal or cmd `./plancks create -e localhost:6227 -f route.json` (from the folder you created **route.json** in). Replace localhost with the IP address of your server if it's no the machine you're running the cli from.
+
 - Test
 
 Use a phone or another device no on your network (connected to the public Internet). Open the domain in your browser.
