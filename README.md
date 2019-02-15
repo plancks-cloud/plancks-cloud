@@ -99,7 +99,7 @@ Run in terminal or cmd `./plancks create -e localhost:6227 -f route.json` (from 
 
 - Test
 
-Use a phone or another device no on your network (connected to the public Internet). Open the domain in your browser.
+Use a phone or another device not on your network (connected to the public Internet). Open the domain in your browser. Try the https url as well.
 
 # Getting Involved
 
