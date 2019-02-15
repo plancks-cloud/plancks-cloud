@@ -5,8 +5,8 @@
 <img src="https://europe-west1-captains-badges.cloudfunctions.net/function-clone-badge-pc?project=plancks-cloud/plancks-cloud" /><br />
 
 ## Pre-install
-- Give your "server" a static IP on the network.
-- Create a NAT (DST-NAT) rule on your router to point at your servers's static IP address.
+- Give your "server" a static IP on the network. Routers typically allow you to do this under DHCP server settings.
+- Create a NAT (DST-NAT) rule on your router to point at your servers's static IP address for TCP 80 and TCP 443.
 - Install docker on your server.
 - Run `docker swarm init` on your server.
 - Run `docker service ls` to check your setup. If if gives an error, docker swarm probably won't work.
