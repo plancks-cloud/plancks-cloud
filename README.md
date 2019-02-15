@@ -64,7 +64,7 @@ Run in terminal or cmd `./plancks create -f service.json` (from the folder you c
 - Deploy the route
 Run in terminal or cmd `./plancks create -f route.json` (from the folder you created **route.json** in)
 - Test
-
+Use a phone or another device no on your network (connected to the public Internet). Open the domain in your browser.
 
 # Getting Involved
 
