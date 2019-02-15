@@ -1,4 +1,5 @@
 # Setup Guide
+<img align="right" width="290" height="290" src="docs/logob.png" />
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/planckscloud/plancks-cloud.svg?maxAge=86400)](https://hub.docker.com/r/planckscloud/plancks-cloud)
 <img src="https://europe-west1-captains-badges.cloudfunctions.net/function-clone-badge-pc?project=plancks-cloud/plancks-cloud" /><br />
