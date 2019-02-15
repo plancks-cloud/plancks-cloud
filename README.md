@@ -42,22 +42,27 @@ Planck's Cloud runs is an Open Source Golang app that runs inside a docker conta
 See <a href="docs/setup.md">the Setup Guide</a> for installation instructions.
 
 # Deploying your first app
+## Domain
 - Buy a domain with DNS provided.
 - Point a DNS "A record" at your public IP address. To see your public IP open your browser to https://ifconfig.co/
 - *Optional* Setup your DNS provider's DNS updater to keep up-to-date with your public IP address.
-- Create a service.json
-
-TBA
-
-- Create the service
-
-TBA
-
-- Create a route.json
-
-TBA
-
-- Create the route
+## Deploying a docker container as a service
+- Define a service in service.json
+```json
+{ 
+  "TBA": "..."
+}
+```
+- Deploy the service
+Run in terminal or cmd `./plancks create -f service.json` (from the folder you created **service.json** in)
+- Define a route in route.json
+```json
+{ 
+  "TBA": "..."
+}
+```
+- Deploy the route
+Run in terminal or cmd `./plancks create -f route.json` (from the folder you created **route.json** in)
 - Test
 
 
