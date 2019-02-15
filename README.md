@@ -41,13 +41,11 @@ Planck's Cloud runs is an Open Source Golang app that runs inside a docker conta
 <img src="https://europe-west1-captains-badges.cloudfunctions.net/function-clone-badge-pc?project=plancks-cloud/plancks-cloud" /><br />
 
 ## Pre-install
-- Buy a domain with DNS provided.
-- Point the DNS record at your public IP address.
-- Setup your DNS provider's DNS updater to keep up-to-date with your public IP address.
 - Give your "server" a static IP on the network.
-- Create a DST-NAT rule on your router to point at your servers's static IP address.
+- Create a NAT (DST-NAT) rule on your router to point at your servers's static IP address.
 - Install docker on your server.
 - Run `docker swarm init` on your server.
+- Run `docker service ls` to check your setup. If if gives an error, docker swarm probably won't work.
 
 ## Installation
 ### Install the CLI
@@ -59,6 +57,21 @@ or
 
 ### Install the Daemon
 - TBA
+
+
+## Deploying your first app
+Setup DNS
+- Buy a domain with DNS provided.
+- Point a DNS "A record" at your public IP address. To see your public IP open your browser to https://ifconfig.co/
+- *Optional* Setup your DNS provider's DNS updater to keep up-to-date with your public IP address.
+Create a service.json
+- TBA
+Create the service
+- TBA
+Create a route.json
+- TBA
+- Create the route
+Test
 
 # Getting Involved
 
