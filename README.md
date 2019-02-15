@@ -22,7 +22,7 @@ A simple command line interface allows you to change things on your servers and 
 - Allows you the freedom, flexibility and control to setup your own cloud infrastructure
 - Run your application in a configuration which would allow you to scale out at home or lift and shift to a cloud provider like AWS, GCP, Azure etc.
 
-# Current Status for Plancks Cloud?
+# Current Status of Planck's Cloud?
 <img src="https://goreportcard.com/badge/github.com/plancks-cloud/plancks-cloud">&nbsp;<a href="https://codeclimate.com/github/plancks-cloud/plancks-cloud/maintainability"><img src="https://api.codeclimate.com/v1/badges/81aff827de3938808c2d/maintainability" /></a>&nbsp;[![codebeat badge](https://codebeat.co/badges/25407218-e856-4f5e-ac7c-9d045dc0fe5a)](https://codebeat.co/projects/github-com-plancks-cloud-plancks-cloud-master)
 
 The features currently available are:
@@ -30,7 +30,7 @@ The features currently available are:
 - Create routes for ingress. Route traffic for a hostname to a service or machine on your network.
 - SSL offloading. Expose endpoints with LetEncrypt provided HTTPS.
 
-# Architecture and Design
+# Architecture
 
 Planck's Cloud runs is an Open Source Golang app that runs inside a docker container. The standard method of deployment is to run the container as a service inside a docker swarm. Planck's Cloud communicates with the docker daemon to create, update and delete services. Docker also proxies traffic from 80 and 443 on the host to the Planck's Cloud container. Planck's Cloud matches DNS entries to reverse proxy traffic to various services hosted in the swarm or other computers on your network.
 
@@ -43,7 +43,7 @@ Planck's Cloud runs is an Open Source Golang app that runs inside a docker conta
 
 See <a href="docs/setup.md">the Setup Guide</a> for installation instructions.
 
-## Deploying your first app
+# Deploying your first app
 - Buy a domain with DNS provided.
 - Point a DNS "A record" at your public IP address. To see your public IP open your browser to https://ifconfig.co/
 - *Optional* Setup your DNS provider's DNS updater to keep up-to-date with your public IP address.
