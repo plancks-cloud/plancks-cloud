@@ -73,7 +73,8 @@ Run in terminal or cmd `./plancks create -e localhost:6227 -f service.json` (fro
 
 - Define a route in route.json
 
-Change the domainName field to the domain you would like to use. Change accept to `true` to accept LetsEncrypt terms and automatically setup HTTPS for this route as well. 
+Change the domainName field to the domain you would like to use. Change accept to `true` to accept LetsEncrypt terms and automatically setup HTTPS for this route as well.
+You may omit the `ssl` portion of the request or set accept to `false`. The email field is provided to LetsEncrypt. Please see their terms regarding the storage and use of your email address.
 
 ```json
 {
