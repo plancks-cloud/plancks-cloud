@@ -34,6 +34,7 @@ The features currently available are:
 
 <img align="center" width="800" src="docs/pc-arch.png" />
 
+Planck's Cloud runs is an Open Source Golang app that runs inside a docker container. The standard method of deployment is to run the container as a service inside a docker swarm. Planck's Cloud communicates with the docker daemon to create, update and delete services. Docker also proxies traffic from 80 and 443 on the host to the Planck's Cloud container. Planck's Cloud matches DNS entries to reverse proxy traffic to various services hosted in the swarm or other computers on your network.
 
 # Setup
 [![Docker Pulls](https://img.shields.io/docker/pulls/planckscloud/plancks-cloud.svg?maxAge=86400)](https://hub.docker.com/r/planckscloud/plancks-cloud)
