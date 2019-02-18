@@ -2,6 +2,7 @@ package controller
 
 import (
 	"flag"
+	"fmt"
 	"github.com/hashicorp/go-memdb"
 	"github.com/plancks-cloud/plancks-cloud/io/http-router"
 	"github.com/plancks-cloud/plancks-cloud/io/mem"
@@ -10,12 +11,12 @@ import (
 )
 
 var (
-	proxy = flag.String("proxy", ":6228", "TCP address to listen to")
+	proxy = flag.String("proxy", ":80", "TCP address to listen to")
 	stop  chan bool
 )
 
-func GetAllRoutes() (resp chan *model.Route) {
-	resp = make(chan *model.Route)
+func GetAllRoutes() (resp chan model.Route) {
+	resp = make(chan model.Route)
 	go func() {
 		ite, err := mem.GetAll(model.RouteCollectionName)
 		iteratorToManyRoutes(ite, err, resp)
@@ -27,29 +28,45 @@ func GetAllRoutes() (resp chan *model.Route) {
 func GetAllRoutesCopy() []model.Route {
 	var arr []model.Route
 	for item := range GetAllRoutes() {
-		arr = append(arr, *item)
+		arr = append(arr, item)
 	}
 	return arr
 }
 
 func InsertManyRoutes(routes *[]model.Route) (err error) {
 	for _, route := range *routes {
-		err = Upsert(&route)
+		cRoute := route //Seems redundant - it's not. Pointers be crazy
+		err = mem.Push(&cRoute)
 		if err != nil {
 			logrus.Error(err)
 			return err
 		}
 	}
+	syncRoutesToDisk()
 	return
 }
 
-func iteratorToManyRoutes(iterator memdb.ResultIterator, err error, out chan *model.Route) {
-	c := mem.IteratorToChannel(iterator, err)
-	for i := range c {
-		item := i.(*model.Route)
-		out <- item
+func iteratorToManyRoutes(iterator memdb.ResultIterator, err error, out chan model.Route) {
+	if err != nil {
+		logrus.Error(err.Error())
+		return
 	}
-
+	if iterator == nil {
+		return
+	}
+	more := true
+	count := 0
+	for more {
+		next := iterator.Next()
+		if next == nil {
+			more = false
+			continue
+		}
+		item := next.(*model.Route)
+		out <- *item
+		count++
+	}
+	logrus.Debugln(fmt.Sprintf("Route iterator counts: %d", count))
 }
 
 func RefreshProxy() {
@@ -66,5 +83,6 @@ func DeleteManyRoutes(routes *[]model.Route) (err error) {
 			return err
 		}
 	}
+	syncRoutesToDisk()
 	return
 }

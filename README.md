@@ -4,58 +4,102 @@
 [![](https://images.microbadger.com/badges/version/planckscloud/plancks-cloud.svg)](https://microbadger.com/images/planckscloud/plancks-cloud "Get your own version badge on microbadger.com")&nbsp;<a href="https://trello.com/b/NutXeZwS/plancks-roadmap"><img src="https://img.shields.io/badge/Roadmap-Trello-brightgreen.svg" /></a>
 <a href="https://coggle.it/diagram/XEgmhoO3UopF8htc/t/logo"><img src="https://img.shields.io/badge/Ideas-Coggle-brightgreen.svg" /></a>&nbsp;[![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://badges.mit-license.org)
 
-# What is Plancks Cloud?
+# What is Planck's Cloud?
 
-Planck's Cloud is a private or public cloud that aims to turn every home into a datacenter. Host your next project from your own home with Planck's Cloud.
+Have you ever wanted to build a tiny app and host it from home? Have you ever had a startup idea and wanted to deploy it within an hour? Planck's Cloud aims to make deploying, reverse proxying and HTTPS your next idea from home a walk in the park.
 
 # How it works
 
-Planck's Cloud allows you to run containers on your network at home and make endpoints available on the public Internet.
+Install Planck's Cloud onto a machine you want to use as a server. Install the CLI and start deploying! 
 
-A simple command line interface allows you to change things simply and quickly.
+# What can Planck's Cloud do?
 
-# What can Plancks Cloud do?
-
-- Pool all your computing resources together to power more intensive operations.
-- Share your computing resources with your friends and families who would like their own computing cloud for their own little projects 
+- Host a website from home.
+- Host an API available for your next React, Vue or Angular app.
+- Run a database for your other services.
 - Allows you the freedom, flexibility and control to setup your own cloud infrastructure
-- Use old and outdated hardware to dedicate more resources for your plancks cloud infrastructure
-- Planck's cloud will utilize resouces at efficiently rate by eliminating overheads which is not required.
-- Gives you the flexibility to deploy your applications to your network with minimal time and effort.
+- Run your application in a configuration which would allow you to scale out at home or lift and shift to a cloud provider like AWS, GCP, Azure etc.
 
-# Current Status for Plancks Cloud?
-
-Currently the plan for Planck's Cloud is to make it possible for anyone and everyone to be able to easily spin up their own Planck's Cloud network from any hardware that is available, and use it to run their projects.
-
-
-# Architecture and Design
+# Current Status of Planck's Cloud?
 <img src="https://goreportcard.com/badge/github.com/plancks-cloud/plancks-cloud">&nbsp;<a href="https://codeclimate.com/github/plancks-cloud/plancks-cloud/maintainability"><img src="https://api.codeclimate.com/v1/badges/81aff827de3938808c2d/maintainability" /></a>&nbsp;[![codebeat badge](https://codebeat.co/badges/25407218-e856-4f5e-ac7c-9d045dc0fe5a)](https://codebeat.co/projects/github-com-plancks-cloud-plancks-cloud-master)
 
-TBA
+The features currently available are:
+- Create, update and delete docker services.
+- Create routes for ingress. Route traffic for a hostname to a service or machine on your network.
+- SSL offloading. Expose endpoints with LetEncrypt provided HTTPS.
 
-# Setup
+# Architecture
+
+Planck's Cloud runs is an Open Source Golang app that runs inside a docker container. The standard method of deployment is to run the container as a service inside a docker swarm. Planck's Cloud communicates with the docker daemon to create, update and delete services. Docker also proxies traffic from 80 and 443 on the host to the Planck's Cloud container. Planck's Cloud matches DNS entries to reverse proxy traffic to various services hosted in the swarm or other computers on your network.
+
+<img align="center" width="800" src="docs/pc-arch.png" />
+
+
+# Installation
 [![Docker Pulls](https://img.shields.io/docker/pulls/planckscloud/plancks-cloud.svg?maxAge=86400)](https://hub.docker.com/r/planckscloud/plancks-cloud)
 <img src="https://europe-west1-captains-badges.cloudfunctions.net/function-clone-badge-pc?project=plancks-cloud/plancks-cloud" /><br />
 
-## Pre-install
-- Buy a domain with DNS provided.
-- Point the DNS record at your public IP address.
-- Setup your DNS provider's DNS updater to keep up-to-date with your public IP address.
-- Give your "server" a static IP on the network.
-- Create a DST-NAT rule on your router to point at your servers's static IP address.
-- Install docker on your server.
-- Run `docker swarm init` on your server.
+See <a href="docs/setup.md">the Setup Guide</a> for installation instructions.
 
-## Installation
-### Install the CLI
-Either
-- `go get github.com/plancks-cloud/plancks-cli`
+# Deploying your first app
 
-or 
-- Run installer at <a href="https://github.com/plancks-cloud/plancks-cli/releases">https://github.com/plancks-cloud/plancks-cli</a>
+## Domain
 
-### Install the Daemon
-- TBA
+- Buy a domain with DNS provided (Namecheap, Godaddy etc). You can use one you already own.
+- Point a DNS "A record" at your public IP address. To see your public IP open https://ifconfig.co/ in your browser.
+- *Optionally:* Setup your DNS provider's DNS updater to keep up-to-date with your public IP address.
+
+## Deploying a docker container as a service
+
+- Define a service in service.json
+```json
+{
+	"type": "service",
+	"list": [
+		{
+			"id": "my-nginx",
+			"name": "nginx",
+			"image": "nginx:latest",
+			"replicas": 1,
+			"memoryLimit": 32
+		}		
+	]
+}
+```
+
+- Deploy the service
+
+Run in terminal or cmd `./plancks create -e localhost:6227 -f service.json` (from the folder you created **service.json** in). Replace localhost with the IP address of your server if it's no the machine you're running the cli from.
+
+- Define a route in route.json
+
+Change the domainName field to the domain you would like to use. Change accept to `true` to accept LetsEncrypt terms and automatically setup HTTPS for this route as well.
+You may omit the `ssl` portion of the request or set accept to `false`. The email field is provided to LetsEncrypt. Please see their terms regarding the storage and use of your email address.
+
+```json
+{
+	"type": "route",
+	"list": [
+		{
+			"id": "nginx",
+			"domainName": "myheredomin.com",
+			"address": "nginx:80",
+			"ssl": {
+			  "email": "youremailhere@provider.com",
+			  "accept": false
+			}
+		}		
+	]
+}
+```
+
+- Deploy the route
+
+Run in terminal or cmd `./plancks create -e localhost:6227 -f route.json` (from the folder you created **route.json** in). Replace localhost with the IP address of your server if it's no the machine you're running the cli from.
+
+- Test
+
+Use a phone or another device not on your network (connected to the public Internet). Open the domain in your browser. Try the https url as well.
 
 # Getting Involved
 

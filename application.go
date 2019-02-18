@@ -9,7 +9,8 @@ import (
 )
 
 var (
-	addr = flag.String("admin", ":6227", "TCP address to listen to")
+	addr        = flag.String("admin", ":6227", "TCP address to listen to")
+	persistPath = flag.String("persistPath", "", "Persistence path")
 )
 
 func main() {
@@ -18,6 +19,9 @@ func main() {
 
 	logrus.Println("...️ starting in-memory DB")
 	mem.Init()
+
+	logrus.Println("...️ pulling down state")
+	controller.StartupSync(persistPath)
 
 	logrus.Println("... ️starting health server")
 	controller.StartHealthServer()

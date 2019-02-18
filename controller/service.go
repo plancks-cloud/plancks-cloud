@@ -19,6 +19,14 @@ func GetAllServices() (resp chan *model.Service) {
 
 }
 
+func GetAllServicesCopy() []model.Service {
+	var arr []model.Service
+	for item := range GetAllServices() {
+		arr = append(arr, *item)
+	}
+	return arr
+}
+
 func iteratorToManyServices(iterator memdb.ResultIterator, err error, out chan *model.Service) {
 	c := mem.IteratorToChannel(iterator, err)
 	for i := range c {
@@ -30,12 +38,14 @@ func iteratorToManyServices(iterator memdb.ResultIterator, err error, out chan *
 
 func InsertManyServices(l *[]model.Service) (err error) {
 	for _, item := range *l {
-		err = Upsert(&item)
+		itemN := item
+		err = mem.Push(&itemN)
 		if err != nil {
 			logrus.Error(err)
 			return err
 		}
 	}
+	syncRoutesToDisk()
 	return
 }
 
@@ -47,6 +57,7 @@ func DeleteManyServices(l *[]model.Service) (err error) {
 			return err
 		}
 	}
+	syncRoutesToDisk()
 	return
 }
 
