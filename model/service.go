@@ -10,5 +10,4 @@ type Service struct {
 	Image       string   `json:"image"`
 	Replicas    int      `json:"replicas,omitempty"`
 	MemoryLimit int      `json:"memoryLimit,omitempty"`
-	Networks    []string `json:"networks"`
 }
