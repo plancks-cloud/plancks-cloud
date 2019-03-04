@@ -13,13 +13,12 @@
 
 ## Installation
 ### Install the CLI
-Either
-- `go get github.com/plancks-cloud/plancks-cli`
-
-or 
-- Run installer at <a href="https://github.com/plancks-cloud/plancks-cli/releases">https://github.com/plancks-cloud/plancks-cli</a>
+After installing Go, 
+`go get -u github.com/plancks-cloud/plancks-cli`
 
 ### Install the Daemon
-- TBA
+1. Ensure the CLI is installed.
+2. Check that docker is running and you have run `docker swarm init`
+3. `plancks install`
 
 
