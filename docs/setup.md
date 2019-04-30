@@ -18,7 +18,6 @@ After installing Go,
 
 ### Install the Daemon
 1. Ensure the CLI is installed.
-2. Check that docker is running and you have run `docker swarm init`
-3. `plancks install`
+2. `plancks install`
 
 
