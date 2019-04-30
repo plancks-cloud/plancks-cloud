@@ -38,7 +38,8 @@ func Serve(listenAddr string, routes []model.Route) (stop chan bool) {
 	var magic *certmagic.Config
 	email, hosts := describeSSL(routes)
 	if len(hosts) > 0 {
-		magic = certmagic.New(certmagic.Config{
+
+		magic = certmagic.New(nil, certmagic.Config{
 			CA:     certmagic.LetsEncryptProductionCA,
 			Email:  email,
 			Agreed: true,
