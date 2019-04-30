@@ -1,5 +1,5 @@
 # From https://medium.com/@pierreprinetti/the-go-1-11-dockerfile-a3218319d191
-FROM golang:1.11.5-alpine as builder
+FROM golang:1.12.4-alpine3.9 as builder
 
 RUN mkdir /user && \
     echo 'nobody:x:65534:65534:nobody:/:' > /user/passwd && \
