@@ -39,11 +39,21 @@ func Serve(listenAddr string, routes []model.Route) (stop chan bool) {
 	email, hosts := describeSSL(routes)
 	if len(hosts) > 0 {
 
-		magic = certmagic.New(nil, certmagic.Config{
+		config := certmagic.Config{
 			CA:     certmagic.LetsEncryptProductionCA,
 			Email:  email,
 			Agreed: true,
+		}
+
+		cache := certmagic.NewCache(certmagic.CacheOptions{
+			GetConfigForCert: func(certificate certmagic.Certificate) (c certmagic.Config, e error) {
+				c = config
+				return
+			},
+			OCSPCheckInterval:  7 * 24 * time.Hour,
+			RenewCheckInterval: 7 * 24 * time.Hour,
 		})
+		magic = certmagic.New(cache, config)
 	}
 
 	//HTTP traffic
