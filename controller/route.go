@@ -72,9 +72,7 @@ func iteratorToManyRoutes(iterator memdb.ResultIterator, err error, out chan mod
 func RefreshProxy() {
 	arr := GetAllRoutesCopy()
 	http_router.StopServer(stop)
-	if arr.AnySSL() {
-		stop = http_router.Serve(*proxy, arr)
-	}
+	stop = http_router.Serve(*proxy, arr)
 }
 
 func DeleteManyRoutes(routes *[]model.Route) (err error) {

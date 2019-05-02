@@ -27,7 +27,7 @@ func StopServer(prev chan bool) {
 
 }
 
-func Serve(listenAddr string, routes []model.Route) (stop chan bool) {
+func Serve(listenAddr string, routes model.Routes) (stop chan bool) {
 	logrus.Println("Starting proxy server")
 	stop = make(chan bool)
 
@@ -65,6 +65,11 @@ func Serve(listenAddr string, routes []model.Route) (stop chan bool) {
 	go func() {
 		_ = http.Serve(listenHTTP, newReverseProxyHandler(routes, m, magic))
 	}()
+
+	if !routes.AnySSL() {
+		logrus.Println("No SSL routes. Not listening.")
+		return
+	}
 
 	listenTLS, err := certmagic.Listen(hosts)
 
