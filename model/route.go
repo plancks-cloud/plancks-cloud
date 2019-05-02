@@ -6,6 +6,17 @@ const RouteCollectionName = "Route"
 const RouteCollectionFileName = "Route.json"
 const RouteCollectionID = "id"
 
+type Routes []Route
+
+func (routes Routes) AnySSL() bool {
+	for _, r := range routes {
+		if r.SSL.Accept {
+			return true
+		}
+	}
+	return false
+}
+
 type Route struct {
 	ID         string `json:"id"`
 	DomainName string `json:"domainName"`
