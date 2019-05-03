@@ -61,6 +61,7 @@ func Serve(listenAddr string, routes model.Routes) (stop chan bool) {
 	if err != nil {
 		logrus.Println(err)
 	}
+
 	m := newReverseProxyMap(routes)
 	go func() {
 		_ = http.Serve(listenHTTP, newReverseProxyHandler(routes, m, magic))

@@ -11,6 +11,7 @@ import (
 var (
 	addr        = flag.String("admin", ":6227", "TCP address to listen to")
 	persistPath = flag.String("persistPath", "", "Persistence path")
+	healthS     = flag.Bool("healthserver", false, "Do health ceck")
 )
 
 func main() {
@@ -23,8 +24,10 @@ func main() {
 	logrus.Println("...️ pulling down state")
 	controller.StartupSync(persistPath)
 
-	logrus.Println("... ️starting health server")
-	controller.StartHealthServer()
+	if *healthS {
+		logrus.Println("... ️starting health server")
+		controller.StartHealthServer()
+	}
 
 	logrus.Println("...️ starting api")
 	http_admin.Startup(addr)

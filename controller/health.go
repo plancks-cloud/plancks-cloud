@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-var healthDoorbell = make(chan bool)
+var healthDoorbell = make(chan bool, 1024)
 
 func StartHealthServer() {
 
