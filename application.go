@@ -6,6 +6,7 @@ import (
 	"github.com/plancks-cloud/plancks-cloud/io/http-admin"
 	"github.com/plancks-cloud/plancks-cloud/io/mem"
 	"github.com/sirupsen/logrus"
+	"os"
 )
 
 var (
@@ -24,7 +25,7 @@ func main() {
 	logrus.Println("...️ pulling down state")
 	controller.StartupSync(persistPath)
 
-	if *healthS {
+	if *healthS || os.Getenv("healthserver") == "true" {
 		logrus.Println("... ️starting health server")
 		controller.StartHealthServer()
 	}
