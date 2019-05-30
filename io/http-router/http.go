@@ -22,12 +22,13 @@ func StopServer(prev chan bool) {
 		logrus.Println("Stopping proxy server...")
 		prev <- true
 		time.Sleep(50 * time.Millisecond) //Not sure how necessary this is...
-
 	}
-
 }
 
 func Serve(listenAddr string, routes model.Routes) (stop chan bool) {
+
+	//SERIOUS PROBLEMS HERE
+
 	logrus.Println("Starting proxy server")
 	stop = make(chan bool)
 
@@ -38,22 +39,7 @@ func Serve(listenAddr string, routes model.Routes) (stop chan bool) {
 	var magic *certmagic.Config
 	email, hosts := describeSSL(routes)
 	if len(hosts) > 0 {
-
-		config := certmagic.Config{
-			CA:     certmagic.LetsEncryptProductionCA,
-			Email:  email,
-			Agreed: true,
-		}
-
-		cache := certmagic.NewCache(certmagic.CacheOptions{
-			GetConfigForCert: func(certificate certmagic.Certificate) (c certmagic.Config, e error) {
-				c = config
-				return
-			},
-			OCSPCheckInterval:  7 * 24 * time.Hour,
-			RenewCheckInterval: 7 * 24 * time.Hour,
-		})
-		magic = certmagic.New(cache, config)
+		magic = makeMagic(email)
 	}
 
 	//HTTP traffic
@@ -72,36 +58,48 @@ func Serve(listenAddr string, routes model.Routes) (stop chan bool) {
 		return
 	}
 
+	certmagic.HTTPSPort = 6229
 	listenTLS, err := certmagic.Listen(hosts)
 
-	err = magic.Manage(hosts)
-	if err != nil {
+	if err = magic.Manage(hosts); err != nil {
 		logrus.Println(fmt.Errorf(err.Error()))
 	}
 
 	go func() {
-		if len(hosts) == 0 {
-			return
-		}
-		err = http.Serve(listenTLS, newReverseProxyHandler(routes, m, magic))
-		if err != nil {
+		if err = http.Serve(listenTLS, newReverseProxyHandler(routes, m, magic)); err != nil {
 			logrus.Println(fmt.Errorf(err.Error()))
 		}
 	}()
+	startStopper(stop, listenHTTP, listenTLS)
+	return
+
+}
+
+func startStopper(stop chan bool, listenHTTP net.Listener, listenTLS net.Listener) {
+	var err error
 	go func() {
 		<-stop
-		err = listenHTTP.Close()
-		if err != nil {
+		if err = listenHTTP.Close(); err != nil {
 			logrus.Error(err)
 		}
-		err = listenTLS.Close()
-		if err != nil {
+		if err = listenTLS.Close(); err != nil {
 			logrus.Error(err)
 		}
 		close(stop)
-
 	}()
-	return
+}
+
+func makeMagic(email string) *certmagic.Config {
+	config := certmagic.Config{CA: certmagic.LetsEncryptProductionCA, Email: email, Agreed: true}
+	cache := certmagic.NewCache(certmagic.CacheOptions{
+		GetConfigForCert: func(certificate certmagic.Certificate) (c certmagic.Config, e error) {
+			c = config
+			return
+		},
+		OCSPCheckInterval:  7 * 24 * time.Hour,
+		RenewCheckInterval: 7 * 24 * time.Hour,
+	})
+	return certmagic.New(cache, config)
 
 }
 

@@ -63,7 +63,6 @@ func handleRoute(ctx *fasthttp.RequestCtx) {
 		util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
 		return
 	}
-	//Send back empty array not null
 	if len(arr) == 0 {
 		b = []byte("[]")
 	}
