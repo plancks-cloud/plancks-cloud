@@ -95,7 +95,7 @@ func handleMutate(method string, body []byte, ctx *fasthttp.RequestCtx) {
 		requestURI := string(ctx.Request.RequestURI())
 		f, ok := mutateHandlers[requestURI]
 		if !ok {
-			logrus.Println(err)
+			logrus.Println("Did not recognize requestURI as apply or delete: ", requestURI)
 			util.WriteErrorToReq(ctx, "Bad method")
 			return
 		}
