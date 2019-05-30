@@ -1,29 +1,18 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/hashicorp/go-memdb"
-	"github.com/sirupsen/logrus"
 )
 
-func iteratorToHandler(iterator memdb.ResultIterator, err error, handler func(next interface{})) {
-	if err != nil {
-		logrus.Error(err.Error())
-		return
-	}
+func iteratorToHandler(iterator memdb.ResultIterator, handler func(next interface{})) {
 	if iterator == nil {
 		return
 	}
-	more := true
-	count := 0
-	for more {
+	for {
 		next := iterator.Next()
 		if next == nil {
-			more = false
-			continue
+			return
 		}
 		handler(next)
-		count++
 	}
-	logrus.Debugln(fmt.Sprintf("iteratorToHandler counts: %d", count))
 }
