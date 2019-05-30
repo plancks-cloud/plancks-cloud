@@ -1,0 +1,1 @@
+This folder allows state to be stored.
