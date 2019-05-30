@@ -72,6 +72,7 @@ func Serve(listenAddr string, routes model.Routes) (stop chan bool) {
 		return
 	}
 
+	certmagic.HTTPSPort = 6229
 	listenTLS, err := certmagic.Listen(hosts)
 
 	err = magic.Manage(hosts)
