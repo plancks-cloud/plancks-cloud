@@ -12,24 +12,32 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+var handlers = make(map[string]ApplyHandler)
+
+type ApplyHandler func(method string, body []byte, ctx *fasthttp.RequestCtx)
+
 func Startup(addr *string) {
+	setupHandlers()
 	if err := fasthttp.ListenAndServe(*addr, requestHandler); err != nil {
 		logrus.Fatalf("Error in ListenAndServe: %s", err)
 	}
 }
 
+func setupHandlers() {
+	handlers["/apply"] = handleApply
+	handlers["/delete"] = handleDelete
+	handlers["/service"] = handleService
+	handlers["/route"] = handleRoute
+}
+
 func requestHandler(ctx *fasthttp.RequestCtx) {
+
 	method := string(ctx.Method())
 	requestURI := string(ctx.Request.RequestURI())
 
-	if requestURI == "/apply" {
-		handleApply(method, ctx.Request.Body(), ctx)
-	} else if requestURI == "/delete" {
-		handleDelete(method, ctx.Request.Body(), ctx)
-	} else if requestURI == "/service" {
-		handleService(ctx)
-	} else if requestURI == "/route" {
-		handleRoute(ctx)
+	f, ok := handlers[requestURI]
+	if ok {
+		f(method, ctx.Request.Body(), ctx)
 	} else {
 		logrus.Println("Unhandled route! ", requestURI)
 		util.WriteErrorToReq(ctx, fmt.Sprint("Could not find a route for ", requestURI))
@@ -37,7 +45,7 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 
 }
 
-func handleService(ctx *fasthttp.RequestCtx) {
+func handleService(method string, body []byte, ctx *fasthttp.RequestCtx) {
 	var arr []*model.Service
 	for item := range controller.GetAllServices() {
 		arr = append(arr, item)
@@ -55,7 +63,7 @@ func handleService(ctx *fasthttp.RequestCtx) {
 	util.WriteJsonResponseToReq(ctx, http.StatusOK, b)
 }
 
-func handleRoute(ctx *fasthttp.RequestCtx) {
+func handleRoute(method string, body []byte, ctx *fasthttp.RequestCtx) {
 	arr := controller.GetAllRoutesCopy()
 	b, err := json.Marshal(arr)
 	if err != nil {
@@ -90,9 +98,7 @@ func handleApply(method string, body []byte, ctx *fasthttp.RequestCtx) {
 		ctx.Response.SetStatusCode(http.StatusOK)
 		ctx.Response.Header.Add("Content-type", "application/json")
 		ctx.Response.SetBody(model.OKMessage)
-
 	}
-
 }
 
 func handleDelete(method string, body []byte, ctx *fasthttp.RequestCtx) {

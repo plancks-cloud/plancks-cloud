@@ -1,12 +1,10 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/hashicorp/go-memdb"
 	"github.com/plancks-cloud/plancks-cloud/io/mem"
 	"github.com/plancks-cloud/plancks-cloud/model"
 	"github.com/plancks-cloud/plancks-cloud/util"
-	"github.com/sirupsen/logrus"
 )
 
 func SaveConfig(item *model.Config) error {
@@ -38,24 +36,8 @@ func GetConfig(id string) (r model.Config) {
 }
 
 func iteratorToManyConfigs(iterator memdb.ResultIterator, err error, out chan model.Config) {
-	if err != nil {
-		logrus.Error(err.Error())
-		return
-	}
-	if iterator == nil {
-		return
-	}
-	more := true
-	count := 0
-	for more {
-		next := iterator.Next()
-		if next == nil {
-			more = false
-			continue
-		}
+	iteratorToHandler(iterator, err, func(next interface{}) {
 		item := next.(*model.Config)
 		out <- *item
-		count++
-	}
-	logrus.Debugln(fmt.Sprintf("Route iterator counts: %d", count))
+	})
 }

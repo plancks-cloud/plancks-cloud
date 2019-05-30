@@ -28,12 +28,10 @@ func GetAllServicesCopy() []model.Service {
 }
 
 func iteratorToManyServices(iterator memdb.ResultIterator, err error, out chan *model.Service) {
-	c := mem.IteratorToChannel(iterator, err)
-	for i := range c {
-		item := i.(*model.Service)
+	iteratorToHandler(iterator, err, func(next interface{}) {
+		item := next.(*model.Service)
 		out <- item
-	}
-
+	})
 }
 
 func InsertManyServices(l *[]model.Service) (err error) {
