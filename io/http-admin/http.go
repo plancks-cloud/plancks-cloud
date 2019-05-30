@@ -99,7 +99,7 @@ func handleMutate(method string, body []byte, ctx *fasthttp.RequestCtx) {
 			util.WriteErrorToReq(ctx, "Bad method")
 			return
 		}
-		if err = f(item); err != nil {
+		if err := f(item); err != nil {
 			logrus.Println(err)
 			util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
 			return
