@@ -8,12 +8,10 @@ func iteratorToHandler(iterator memdb.ResultIterator, handler func(next interfac
 	if iterator == nil {
 		return
 	}
-	more := true
-	for more {
+	for {
 		next := iterator.Next()
 		if next == nil {
-			more = false
-			continue // SHOULD THIS BE RETURN?
+			return
 		}
 		handler(next)
 	}
