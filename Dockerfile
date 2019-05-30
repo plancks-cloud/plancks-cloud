@@ -20,7 +20,7 @@ FROM scratch as final
 COPY --from=builder /user/group /user/passwd /etc/
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /src/app /app
-COPY data /.local
+COPY --chown=nobody:nobody data /.local
 
 USER nobody:nobody
 
