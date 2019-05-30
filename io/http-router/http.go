@@ -75,28 +75,21 @@ func Serve(listenAddr string, routes model.Routes) (stop chan bool) {
 	certmagic.HTTPSPort = 6229
 	listenTLS, err := certmagic.Listen(hosts)
 
-	err = magic.Manage(hosts)
-	if err != nil {
+	if err = magic.Manage(hosts); err != nil {
 		logrus.Println(fmt.Errorf(err.Error()))
 	}
 
 	go func() {
-		if len(hosts) == 0 {
-			return
-		}
-		err = http.Serve(listenTLS, newReverseProxyHandler(routes, m, magic))
-		if err != nil {
+		if err = http.Serve(listenTLS, newReverseProxyHandler(routes, m, magic)); err != nil {
 			logrus.Println(fmt.Errorf(err.Error()))
 		}
 	}()
 	go func() {
 		<-stop
-		err = listenHTTP.Close()
-		if err != nil {
+		if err = listenHTTP.Close(); err != nil {
 			logrus.Error(err)
 		}
-		err = listenTLS.Close()
-		if err != nil {
+		if err = listenTLS.Close(); err != nil {
 			logrus.Error(err)
 		}
 		close(stop)
