@@ -19,6 +19,7 @@ RUN go mod vendor
 FROM depbuilder as builder
 WORKDIR /src
 COPY . .
+RUN rm /src/go.sum
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
 
 # Build final and run the application
