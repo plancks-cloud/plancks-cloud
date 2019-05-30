@@ -2,7 +2,6 @@ package controller
 
 import (
 	"flag"
-	"fmt"
 	"github.com/hashicorp/go-memdb"
 	"github.com/plancks-cloud/plancks-cloud/io/http-router"
 	"github.com/plancks-cloud/plancks-cloud/io/mem"
@@ -36,10 +35,9 @@ func GetAllRoutesCopy() (result model.Routes) {
 func InsertManyRoutes(routes *[]model.Route) (err error) {
 	for _, route := range *routes {
 		cRoute := route //Seems redundant - it's not. Pointers be crazy
-		err = mem.Push(&cRoute)
-		if err != nil {
+		if err = mem.Push(&cRoute); err != nil {
 			logrus.Error(err)
-			return err
+			return
 		}
 	}
 	syncRoutesToDisk()
@@ -47,26 +45,10 @@ func InsertManyRoutes(routes *[]model.Route) (err error) {
 }
 
 func iteratorToManyRoutes(iterator memdb.ResultIterator, err error, out chan model.Route) {
-	if err != nil {
-		logrus.Error(err.Error())
-		return
-	}
-	if iterator == nil {
-		return
-	}
-	more := true
-	count := 0
-	for more {
-		next := iterator.Next()
-		if next == nil {
-			more = false
-			continue
-		}
+	iteratorToHandler(iterator, err, func(next interface{}) {
 		item := next.(*model.Route)
 		out <- *item
-		count++
-	}
-	logrus.Debugln(fmt.Sprintf("Route iterator counts: %d", count))
+	})
 }
 
 func RefreshProxy() {
