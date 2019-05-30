@@ -22,12 +22,13 @@ func StopServer(prev chan bool) {
 		logrus.Println("Stopping proxy server...")
 		prev <- true
 		time.Sleep(50 * time.Millisecond) //Not sure how necessary this is...
-
 	}
-
 }
 
 func Serve(listenAddr string, routes model.Routes) (stop chan bool) {
+
+	//SERIOUS PROBLEMS HERE
+
 	logrus.Println("Starting proxy server")
 	stop = make(chan bool)
 
