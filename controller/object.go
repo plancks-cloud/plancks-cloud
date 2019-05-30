@@ -33,8 +33,7 @@ func handleApplyRoutes(list json.RawMessage) (err error) {
 		return
 	}
 	logrus.Debugln("Inserting", len(*routes), "routes")
-	err = InsertManyRoutes(routes)
-	if err != nil {
+	if err = InsertManyRoutes(routes); err != nil {
 		logrus.Error(err)
 		return
 	}
@@ -56,8 +55,7 @@ func handleApplyServices(list json.RawMessage) (err error) {
 		logrus.Error(err)
 		return
 	}
-	err = InsertManyServices(services)
-	if err != nil {
+	if err = InsertManyServices(services); err != nil {
 		logrus.Error(err)
 		return
 	}
@@ -85,8 +83,7 @@ func handleDeleteRoutes(list json.RawMessage) (err error) {
 		logrus.Error(err)
 		return
 	}
-	err = DeleteManyRoutes(routes)
-	if err != nil {
+	if err = DeleteManyRoutes(routes); err != nil {
 		logrus.Error(err)
 		return
 	}
@@ -101,13 +98,11 @@ func handleDeleteServices(list json.RawMessage) (err error) {
 		logrus.Error(err)
 		return
 	}
-	err = DeleteManyServices(services)
-	if err != nil {
+	if err = DeleteManyServices(services); err != nil {
 		logrus.Error(err)
 		return
 	}
-	err = pc_docker.DeleteServices(convertServices(services))
-	if err != nil {
+	if err = pc_docker.DeleteServices(convertServices(services)); err != nil {
 		logrus.Error("Failed to delete service: ", err)
 	}
 	healthDoorbell <- true //Ensures the health check runs

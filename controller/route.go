@@ -64,8 +64,7 @@ func RefreshProxy() {
 
 func DeleteManyRoutes(routes *[]model.Route) (err error) {
 	for _, route := range *routes {
-		_, err = mem.Delete(model.RouteCollectionName, model.RouteCollectionID, route.ID)
-		if err != nil {
+		if _, err = mem.Delete(model.RouteCollectionName, model.RouteCollectionID, route.ID); err != nil {
 			logrus.Error(err)
 			return err
 		}

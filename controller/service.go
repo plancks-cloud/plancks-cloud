@@ -42,8 +42,7 @@ func iteratorToManyServices(iterator memdb.ResultIterator, out chan *model.Servi
 func InsertManyServices(l *[]model.Service) (err error) {
 	for _, item := range *l {
 		itemN := item
-		err = mem.Push(&itemN)
-		if err != nil {
+		if err = mem.Push(&itemN); err != nil {
 			logrus.Error(err)
 			return err
 		}
@@ -54,8 +53,7 @@ func InsertManyServices(l *[]model.Service) (err error) {
 
 func DeleteManyServices(l *[]model.Service) (err error) {
 	for _, item := range *l {
-		_, err = mem.Delete(model.ServiceCollectionName, model.CollectionID, item.ID)
-		if err != nil {
+		if _, err = mem.Delete(model.ServiceCollectionName, model.CollectionID, item.ID); err != nil {
 			logrus.Error(err)
 			return err
 		}
