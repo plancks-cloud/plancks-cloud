@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/plancks-cloud/plancks-cloud/model"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
@@ -28,7 +29,7 @@ func syncRoutesFromDisk() {
 		return
 	}
 
-	file := filepath.ToSlash(filepath.Join(PersistPath, model.RouteCollectionFileName))
+	file := filepath.ToSlash(filepath.Join(PersistPath, fmt.Sprint(model.RouteCollectionName, ".json")))
 	if _, err := os.Stat(file); err == nil {
 		b, err := ioutil.ReadFile(file)
 		var arr []model.Route
@@ -56,7 +57,7 @@ func syncServicesFromDisk() {
 		return
 	}
 
-	file := filepath.ToSlash(filepath.Join(PersistPath, model.ServiceCollectionFileName))
+	file := filepath.ToSlash(filepath.Join(PersistPath, fmt.Sprint(model.ServiceCollectionName, ".json")))
 	if _, err := os.Stat(file); err == nil {
 		b, err := ioutil.ReadFile(file)
 		var arr []model.Service
@@ -82,7 +83,7 @@ func syncRoutesToDisk() {
 	if PersistPath == "" {
 		return
 	}
-	file := filepath.ToSlash(filepath.Join(PersistPath, model.RouteCollectionFileName))
+	file := filepath.ToSlash(filepath.Join(PersistPath, fmt.Sprint(model.RouteCollectionName, ".json")))
 	logrus.Println("Saving routes to:", file)
 	//Get routes -> json -> []byte
 	routes := GetAllRoutesCopy()
@@ -110,7 +111,7 @@ func syncServicesToDisk() {
 		return
 	}
 
-	file := filepath.ToSlash(filepath.Join(PersistPath, model.ServiceCollectionFileName))
+	file := filepath.ToSlash(filepath.Join(PersistPath, fmt.Sprint(model.ServiceCollectionName, ".json")))
 	logrus.Println("Saving services to:", file)
 	//Get services -> json -> []byte
 	arr := GetAllServicesCopy()
