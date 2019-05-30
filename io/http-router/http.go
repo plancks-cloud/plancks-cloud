@@ -69,6 +69,13 @@ func Serve(listenAddr string, routes model.Routes) (stop chan bool) {
 			logrus.Println(fmt.Errorf(err.Error()))
 		}
 	}()
+	startStopper(stop, listenHTTP, listenTLS)
+	return
+
+}
+
+func startStopper(stop chan bool, listenHTTP net.Listener, listenTLS net.Listener) {
+	var err error
 	go func() {
 		<-stop
 		if err = listenHTTP.Close(); err != nil {
@@ -78,10 +85,7 @@ func Serve(listenAddr string, routes model.Routes) (stop chan bool) {
 			logrus.Error(err)
 		}
 		close(stop)
-
 	}()
-	return
-
 }
 
 func makeMagic(email string) *certmagic.Config {
