@@ -12,7 +12,12 @@ func GetAllServices() (resp chan *model.Service) {
 	resp = make(chan *model.Service)
 	go func() {
 		ite, err := mem.GetAll(model.ServiceCollectionName)
-		iteratorToManyServices(ite, err, resp)
+		if err != nil {
+			logrus.Errorln(err)
+			close(resp)
+			return
+		}
+		iteratorToManyServices(ite, resp)
 		close(resp)
 	}()
 	return resp
@@ -27,8 +32,8 @@ func GetAllServicesCopy() []model.Service {
 	return arr
 }
 
-func iteratorToManyServices(iterator memdb.ResultIterator, err error, out chan *model.Service) {
-	iteratorToHandler(iterator, err, func(next interface{}) {
+func iteratorToManyServices(iterator memdb.ResultIterator, out chan *model.Service) {
+	iteratorToHandler(iterator, func(next interface{}) {
 		item := next.(*model.Service)
 		out <- item
 	})

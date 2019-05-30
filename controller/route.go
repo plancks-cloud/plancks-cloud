@@ -18,7 +18,12 @@ func GetAllRoutes() (resp chan model.Route) {
 	resp = make(chan model.Route)
 	go func() {
 		ite, err := mem.GetAll(model.RouteCollectionName)
-		iteratorToManyRoutes(ite, err, resp)
+		if err != nil {
+			logrus.Errorln(err)
+			close(resp)
+			return
+		}
+		iteratorToManyRoutes(ite, resp)
 		close(resp)
 	}()
 	return resp
@@ -44,8 +49,8 @@ func InsertManyRoutes(routes *[]model.Route) (err error) {
 	return
 }
 
-func iteratorToManyRoutes(iterator memdb.ResultIterator, err error, out chan model.Route) {
-	iteratorToHandler(iterator, err, func(next interface{}) {
+func iteratorToManyRoutes(iterator memdb.ResultIterator, out chan model.Route) {
+	iteratorToHandler(iterator, func(next interface{}) {
 		item := next.(*model.Route)
 		out <- *item
 	})
