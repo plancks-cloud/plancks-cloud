@@ -38,22 +38,7 @@ func Serve(listenAddr string, routes model.Routes) (stop chan bool) {
 	var magic *certmagic.Config
 	email, hosts := describeSSL(routes)
 	if len(hosts) > 0 {
-
-		config := certmagic.Config{
-			CA:     certmagic.LetsEncryptProductionCA,
-			Email:  email,
-			Agreed: true,
-		}
-
-		cache := certmagic.NewCache(certmagic.CacheOptions{
-			GetConfigForCert: func(certificate certmagic.Certificate) (c certmagic.Config, e error) {
-				c = config
-				return
-			},
-			OCSPCheckInterval:  7 * 24 * time.Hour,
-			RenewCheckInterval: 7 * 24 * time.Hour,
-		})
-		magic = certmagic.New(cache, config)
+		magic = makeMagic(email)
 	}
 
 	//HTTP traffic
@@ -96,6 +81,20 @@ func Serve(listenAddr string, routes model.Routes) (stop chan bool) {
 
 	}()
 	return
+
+}
+
+func makeMagic(email string) *certmagic.Config {
+	config := certmagic.Config{CA: certmagic.LetsEncryptProductionCA, Email: email, Agreed: true}
+	cache := certmagic.NewCache(certmagic.CacheOptions{
+		GetConfigForCert: func(certificate certmagic.Certificate) (c certmagic.Config, e error) {
+			c = config
+			return
+		},
+		OCSPCheckInterval:  7 * 24 * time.Hour,
+		RenewCheckInterval: 7 * 24 * time.Hour,
+	})
+	return certmagic.New(cache, config)
 
 }
 
