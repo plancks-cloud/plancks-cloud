@@ -35,10 +35,9 @@ func GetAllRoutesCopy() (result model.Routes) {
 func InsertManyRoutes(routes *[]model.Route) (err error) {
 	for _, route := range *routes {
 		cRoute := route //Seems redundant - it's not. Pointers be crazy
-		err = mem.Push(&cRoute)
-		if err != nil {
+		if err = mem.Push(&cRoute); err != nil {
 			logrus.Error(err)
-			return err
+			return
 		}
 	}
 	syncRoutesToDisk()

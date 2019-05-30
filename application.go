@@ -11,11 +11,14 @@ import (
 
 var (
 	addr        = flag.String("admin", ":6227", "TCP address to listen to")
-	persistPath = flag.String("persistPath", "", "Persistence path")
+	persistPath = ""
 	healthS     = flag.Bool("healthserver", false, "Do health ceck")
 )
 
 func main() {
+
+	getEnv()
+
 	flag.Parse()
 	logrus.Println("☁️☁️☁️ Planck's Cloud is starting ☁️☁️☁️")
 
@@ -33,4 +36,9 @@ func main() {
 	logrus.Println("...️ starting api")
 	http_admin.Startup(addr)
 
+}
+
+func getEnv() {
+	persistPath = os.Getenv("persistPath")
+	controller.PersistPath = persistPath
 }

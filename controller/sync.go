@@ -9,25 +9,12 @@ import (
 	"path/filepath"
 )
 
-func StartupSync(persistPath *string) {
-	if len(*persistPath) == 0 {
+var PersistPath string
+
+func StartupSync(persistPath string) {
+	if persistPath == "" {
 		logrus.Info("Persist path not provided. Not starting persist")
 		return
-	}
-
-	err := SaveConfig(&model.Config{ID: model.PersistPath, Val: *persistPath})
-	if err != nil {
-		logrus.Error(err)
-		return
-	}
-
-	configPath := GetPersistPath()
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		err = os.Mkdir(configPath, os.ModeDir)
-		if err != nil {
-			logrus.Error(err)
-			return
-		}
 	}
 
 	syncServicesFromDisk()
@@ -37,7 +24,11 @@ func StartupSync(persistPath *string) {
 //Saves routes to memory DB
 func syncRoutesFromDisk() {
 
-	file := filepath.ToSlash(filepath.Join(GetPersistPath(), model.RouteCollectionFileName))
+	if PersistPath == "" {
+		return
+	}
+
+	file := filepath.ToSlash(filepath.Join(PersistPath, model.RouteCollectionFileName))
 	if _, err := os.Stat(file); err == nil {
 		b, err := ioutil.ReadFile(file)
 		var arr []model.Route
@@ -51,6 +42,7 @@ func syncRoutesFromDisk() {
 			logrus.Error(err)
 			return
 		}
+		RefreshProxy()
 	} else {
 		logrus.Println("Routes json not found. Not loading any routes.")
 	}
@@ -60,7 +52,11 @@ func syncRoutesFromDisk() {
 //Saves routes to memory DB
 func syncServicesFromDisk() {
 
-	file := filepath.ToSlash(filepath.Join(GetPersistPath(), model.ServiceCollectionFileName))
+	if PersistPath == "" {
+		return
+	}
+
+	file := filepath.ToSlash(filepath.Join(PersistPath, model.ServiceCollectionFileName))
 	if _, err := os.Stat(file); err == nil {
 		b, err := ioutil.ReadFile(file)
 		var arr []model.Service
@@ -83,13 +79,11 @@ func syncServicesFromDisk() {
 //Saves routes to disk
 func syncRoutesToDisk() {
 
-	//Check if feature is on
-	c := GetConfig(model.PersistPath)
-	if c.ID == "" || c.Val == "" {
-		logrus.Infoln("No persist path. No syncing.")
+	if PersistPath == "" {
 		return
 	}
-
+	file := filepath.ToSlash(filepath.Join(PersistPath, model.RouteCollectionFileName))
+	logrus.Println("Saving routes to:", file)
 	//Get routes -> json -> []byte
 	routes := GetAllRoutesCopy()
 	b, err := json.Marshal(&routes)
@@ -97,8 +91,6 @@ func syncRoutesToDisk() {
 		logrus.Error(err)
 		return
 	}
-
-	file := filepath.ToSlash(filepath.Join(GetPersistPath(), model.RouteCollectionFileName))
 
 	//Delete file
 	os.Remove(file)
@@ -114,13 +106,12 @@ func syncRoutesToDisk() {
 //Saves svcs to disk
 func syncServicesToDisk() {
 
-	//Check if feature is on
-	c := GetConfig(model.PersistPath)
-	if c.ID == "" || c.Val == "" {
-		logrus.Infoln("No persist path. No syncing.")
+	if PersistPath == "" {
 		return
 	}
 
+	file := filepath.ToSlash(filepath.Join(PersistPath, model.ServiceCollectionFileName))
+	logrus.Println("Saving services to:", file)
 	//Get services -> json -> []byte
 	arr := GetAllServicesCopy()
 	b, err := json.Marshal(&arr)
@@ -128,8 +119,6 @@ func syncServicesToDisk() {
 		logrus.Error(err)
 		return
 	}
-
-	file := filepath.ToSlash(filepath.Join(GetPersistPath(), model.ServiceCollectionFileName))
 
 	//Delete file
 	os.Remove(file)
