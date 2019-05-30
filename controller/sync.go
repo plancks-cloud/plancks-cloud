@@ -29,7 +29,7 @@ func syncRoutesFromDisk() {
 		return
 	}
 
-	file := filepath.ToSlash(filepath.Join(PersistPath, model.RouteCollectionFileName))
+	file := filepath.ToSlash(filepath.Join(PersistPath, fmt.Sprint(model.RouteCollectionName, ".json")))
 	if _, err := os.Stat(file); err == nil {
 		b, err := ioutil.ReadFile(file)
 		var arr []model.Route
@@ -83,7 +83,7 @@ func syncRoutesToDisk() {
 	if PersistPath == "" {
 		return
 	}
-	file := filepath.ToSlash(filepath.Join(PersistPath, model.RouteCollectionFileName))
+	file := filepath.ToSlash(filepath.Join(PersistPath, fmt.Sprint(model.RouteCollectionName, ".json")))
 	logrus.Println("Saving routes to:", file)
 	//Get routes -> json -> []byte
 	routes := GetAllRoutesCopy()

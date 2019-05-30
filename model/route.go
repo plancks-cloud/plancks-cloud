@@ -3,8 +3,6 @@ package model
 import "fmt"
 
 const RouteCollectionName = "Route"
-const RouteCollectionFileName = "Route.json"
-const RouteCollectionID = "id"
 
 type Routes []Route
 
