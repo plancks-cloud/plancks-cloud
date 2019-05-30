@@ -13,7 +13,9 @@ import (
 )
 
 var handlers = make(map[string]ApplyHandler)
+var mutateHandlers = make(map[string]MutateHandler)
 
+type MutateHandler func(item *model.Object) (err error)
 type ApplyHandler func(method string, body []byte, ctx *fasthttp.RequestCtx)
 
 func Startup(addr *string) {
@@ -24,10 +26,13 @@ func Startup(addr *string) {
 }
 
 func setupHandlers() {
-	handlers["/apply"] = handleApply
-	handlers["/delete"] = handleDelete
+	handlers["/apply"] = handleMutate
+	handlers["/delete"] = handleMutate
 	handlers["/service"] = handleService
 	handlers["/route"] = handleRoute
+
+	mutateHandlers["/apply"] = controller.HandleApply
+	mutateHandlers["/delete"] = controller.HandleDelete
 }
 
 func requestHandler(ctx *fasthttp.RequestCtx) {
@@ -78,7 +83,7 @@ func handleRoute(method string, body []byte, ctx *fasthttp.RequestCtx) {
 
 }
 
-func handleApply(method string, body []byte, ctx *fasthttp.RequestCtx) {
+func handleMutate(method string, body []byte, ctx *fasthttp.RequestCtx) {
 	if method == http.MethodPost || method == http.MethodPut {
 		var item = &model.Object{}
 		err := json.Unmarshal(body, &item)
@@ -88,8 +93,14 @@ func handleApply(method string, body []byte, ctx *fasthttp.RequestCtx) {
 			return
 		}
 
-		err = controller.HandleApply(item)
-		if err != nil {
+		requestURI := string(ctx.Request.RequestURI())
+		f, ok := mutateHandlers[requestURI]
+		if !ok {
+			logrus.Println(err)
+			util.WriteErrorToReq(ctx, "Bad method")
+			return
+		}
+		if err = f(item); err != nil {
 			logrus.Println(err)
 			util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
 			return
@@ -99,29 +110,4 @@ func handleApply(method string, body []byte, ctx *fasthttp.RequestCtx) {
 		ctx.Response.Header.Add("Content-type", "application/json")
 		ctx.Response.SetBody(model.OKMessage)
 	}
-}
-
-func handleDelete(method string, body []byte, ctx *fasthttp.RequestCtx) {
-	if method == http.MethodPost || method == http.MethodPut {
-		var item = &model.Object{}
-		err := json.Unmarshal(body, &item)
-		if err != nil {
-			logrus.Println(err)
-			util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
-			return
-		}
-
-		err = controller.HandleDelete(item)
-		if err != nil {
-			logrus.Println(err)
-			util.WriteErrorToReq(ctx, fmt.Sprint(err.Error()))
-			return
-		}
-
-		ctx.Response.SetStatusCode(http.StatusOK)
-		ctx.Response.Header.Add("Content-type", "application/json")
-		ctx.Response.SetBody(model.OKMessage)
-
-	}
-
 }
