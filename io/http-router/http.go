@@ -147,8 +147,8 @@ func newReverseProxyHandler(routes []model.Route, m map[string]*httputil.Reverse
 		}
 		rp, ok := m[util.HostOfURL(r.Host)]
 		if !ok {
-			logrus.Println("Could not find host: ", util.HostOfURL(r.Host))
-			logrus.Println("Hosts known: ", len(m))
+			logrus.Errorln("Could not find host: ", r.Host)
+			logrus.Errorln("Hosts known: ", len(m))
 			//TODO: Send error
 			return
 		}
