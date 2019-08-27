@@ -158,11 +158,11 @@ func newReverseProxyHandler(routes model.Routes, m map[string]*httputil.ReverseP
 
 func handleByReverseProxy(w http.ResponseWriter, r *http.Request, m map[string]*httputil.ReverseProxy) (carryOn bool) {
 	rp, ok := m[util.HostOfURL(r.Host)]
-	if !ok {
-		return true
+	if ok {
+		rp.ServeHTTP(w, r)
+		return false
 	}
-	rp.ServeHTTP(w, r)
-
+	return true
 }
 
 func handleRedirect(w http.ResponseWriter, r *http.Request, routes model.Routes, fromTLS bool) (carryOn bool) {
