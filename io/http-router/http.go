@@ -50,7 +50,7 @@ func Serve(listenAddr string, routes model.Routes) (stop chan bool) {
 
 	m := newReverseProxyMap(routes)
 	go func() {
-		_ = http.Serve(listenHTTP, newReverseProxyHandler(routes, m, magic))
+		_ = http.Serve(listenHTTP, newReverseProxyHandler(routes, m, magic, false))
 	}()
 
 	if !routes.AnySSL() {
@@ -66,7 +66,7 @@ func Serve(listenAddr string, routes model.Routes) (stop chan bool) {
 	}
 
 	go func() {
-		if err = http.Serve(listenTLS, newReverseProxyHandler(routes, m, magic)); err != nil {
+		if err = http.Serve(listenTLS, newReverseProxyHandler(routes, m, magic, true)); err != nil {
 			logrus.Println(fmt.Errorf(err.Error()))
 		}
 	}()
@@ -132,12 +132,24 @@ func newReverseProxyMap(routes []model.Route) map[string]*httputil.ReverseProxy 
 
 }
 
-func newReverseProxyHandler(routes []model.Route, m map[string]*httputil.ReverseProxy, magic *certmagic.Config) http.Handler {
+func newReverseProxyHandler(routes model.Routes, m map[string]*httputil.ReverseProxy, magic *certmagic.Config, fromTLS bool) http.Handler {
 	logrus.Debugln("Hosts known before: ", len(m))
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if magic.HandleHTTPChallenge(w, r) {
 			return // challenge handled; nothing else to do
+		}
+		found, route := routes.Find(r.Host)
+		if found && !fromTLS && route.SSL.Accept && !route.AllowHTTP {
+			result := r.Host + r.URL.Path + "?" + r.URL.Query().Encode()
+			if r.TLS != nil {
+				result = "https://" + result
+			} else {
+				result = "http://" + result
+			}
+			w.WriteHeader(http.StatusTemporaryRedirect)
+			w.Header().Set("Location", result)
+			return
 		}
 
 		hj, isHJ := w.(http.Hijacker)
@@ -147,9 +159,7 @@ func newReverseProxyHandler(routes []model.Route, m map[string]*httputil.Reverse
 		}
 		rp, ok := m[util.HostOfURL(r.Host)]
 		if !ok {
-			logrus.Errorln("Could not find host: ", r.Host)
-			logrus.Errorln("Hosts known: ", len(m))
-			//TODO: Send error
+			logrus.Errorln("Could not find host: ", r.Host, "among", len(m))
 			return
 		}
 
