@@ -136,26 +136,33 @@ func newReverseProxyHandler(routes model.Routes, m map[string]*httputil.ReverseP
 	logrus.Debugln("Hosts known before: ", len(m))
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if magic.HandleHTTPChallenge(w, r) {
+
+		if carryOn := magic.HandleHTTPChallenge(w, r); carryOn == false {
 			return // challenge handled; nothing else to do
 		}
-		if !handleRedirect(w, r, routes, fromTLS) {
-			return //handled by http redirect
+		if carryOn := handleRedirect(w, r, routes, fromTLS); carryOn == false {
+			return //handled by http redirect; nothing else to do
 		}
+		if carryOn := handleWS(w, r, routes); carryOn == false {
+			return //handled by handleWS; nothing else to do
+		}
+		if carryOn := handleByReverseProxy(w, r, m); carryOn == false {
+			return //Handled by reverse proxy; nothing else to do
+		}
+		logrus.Errorln("Could not handle: ", r.URL.String(), "among", len(m))
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Bad request"))
 
-		hj, isHJ := w.(http.Hijacker)
-		if r.Header.Get("Upgrade") == "websocket" && isHJ {
-			handleHiJackedWS(hj, r, w, routes)
-			return
-		}
-		rp, ok := m[util.HostOfURL(r.Host)]
-		if !ok {
-			logrus.Errorln("Could not find host: ", r.Host, "among", len(m))
-			return
-		}
-
-		rp.ServeHTTP(w, r)
 	})
+}
+
+func handleByReverseProxy(w http.ResponseWriter, r *http.Request, m map[string]*httputil.ReverseProxy) (carryOn bool) {
+	rp, ok := m[util.HostOfURL(r.Host)]
+	if !ok {
+		return true
+	}
+	rp.ServeHTTP(w, r)
+
 }
 
 func handleRedirect(w http.ResponseWriter, r *http.Request, routes model.Routes, fromTLS bool) (carryOn bool) {
@@ -171,6 +178,15 @@ func handleRedirect(w http.ResponseWriter, r *http.Request, routes model.Routes,
 	}
 	return true
 
+}
+
+func handleWS(w http.ResponseWriter, r *http.Request, routes model.Routes) (carryOn bool) {
+	hj, isHJ := w.(http.Hijacker)
+	if r.Header.Get("Upgrade") == "websocket" && isHJ {
+		handleHiJackedWS(hj, r, w, routes)
+		return false
+	}
+	return true
 }
 
 func handleHiJackedWS(hj http.Hijacker, r *http.Request, w http.ResponseWriter, routes []model.Route) {
