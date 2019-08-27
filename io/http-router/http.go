@@ -139,8 +139,11 @@ func newReverseProxyHandler(routes model.Routes, m map[string]*httputil.ReverseP
 		if magic.HandleHTTPChallenge(w, r) {
 			return // challenge handled; nothing else to do
 		}
-		found, route := routes.Find(r.Host)
+		if !handleRedirect(w, r, routes, fromTLS) {
+			return //handled by http redirect
+		}
 
+		found, route := routes.Find(r.Host)
 		if found && !fromTLS && route.SSL.Accept && !route.AllowHTTP {
 			result := "https://" + r.Host + r.URL.Path
 			if len(r.URL.Query()) > 0 {
@@ -164,6 +167,21 @@ func newReverseProxyHandler(routes model.Routes, m map[string]*httputil.ReverseP
 
 		rp.ServeHTTP(w, r)
 	})
+}
+
+func handleRedirect(w http.ResponseWriter, r *http.Request, routes model.Routes, fromTLS bool) (carryOn bool) {
+	found, route := routes.Find(r.Host)
+	if found && !fromTLS && route.SSL.Accept && !route.AllowHTTP {
+		result := "https://" + r.Host + r.URL.Path
+		if len(r.URL.Query()) > 0 {
+			result += "?" + r.URL.Query().Encode()
+		}
+		w.Header().Set("Location", result)
+		w.WriteHeader(http.StatusTemporaryRedirect)
+		return false
+	}
+	return true
+
 }
 
 func handleHiJackedWS(hj http.Hijacker, r *http.Request, w http.ResponseWriter, routes []model.Route) {
