@@ -140,15 +140,14 @@ func newReverseProxyHandler(routes model.Routes, m map[string]*httputil.ReverseP
 			return // challenge handled; nothing else to do
 		}
 		found, route := routes.Find(r.Host)
+
 		if found && !fromTLS && route.SSL.Accept && !route.AllowHTTP {
-			result := r.Host + r.URL.Path + "?" + r.URL.Query().Encode()
-			if r.TLS != nil {
-				result = "https://" + result
-			} else {
-				result = "http://" + result
+			result := "https://" + r.Host + r.URL.Path
+			if len(r.URL.Query()) > 0 {
+				result += "?" + r.URL.Query().Encode()
 			}
-			w.WriteHeader(http.StatusTemporaryRedirect)
 			w.Header().Set("Location", result)
+			w.WriteHeader(http.StatusTemporaryRedirect)
 			return
 		}
 
