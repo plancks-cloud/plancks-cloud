@@ -145,13 +145,14 @@ func newReverseProxyHandler(routes []model.Route, m map[string]*httputil.Reverse
 			handleHiJackedWS(hj, r, w, routes)
 			return
 		}
-		rp := m[util.HostOfURL(r.Host)]
-		if rp == nil {
+		rp, ok := m[util.HostOfURL(r.Host)]
+		if !ok {
 			logrus.Println("Could not find host: ", util.HostOfURL(r.Host))
 			logrus.Println("Hosts known: ", len(m))
 			//TODO: Send error
 			return
 		}
+
 		rp.ServeHTTP(w, r)
 	})
 }
