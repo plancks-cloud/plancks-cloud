@@ -143,17 +143,6 @@ func newReverseProxyHandler(routes model.Routes, m map[string]*httputil.ReverseP
 			return //handled by http redirect
 		}
 
-		found, route := routes.Find(r.Host)
-		if found && !fromTLS && route.SSL.Accept && !route.AllowHTTP {
-			result := "https://" + r.Host + r.URL.Path
-			if len(r.URL.Query()) > 0 {
-				result += "?" + r.URL.Query().Encode()
-			}
-			w.Header().Set("Location", result)
-			w.WriteHeader(http.StatusTemporaryRedirect)
-			return
-		}
-
 		hj, isHJ := w.(http.Hijacker)
 		if r.Header.Get("Upgrade") == "websocket" && isHJ {
 			handleHiJackedWS(hj, r, w, routes)
