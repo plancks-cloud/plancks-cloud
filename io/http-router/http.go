@@ -137,7 +137,7 @@ func newReverseProxyHandler(routes model.Routes, m map[string]*httputil.ReverseP
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		if carryOn := magic.HandleHTTPChallenge(w, r); carryOn == false {
+		if doNotCarryOn := magic.HandleHTTPChallenge(w, r); doNotCarryOn == true {
 			return // challenge handled; nothing else to do
 		}
 		if carryOn := handleRedirect(w, r, routes, fromTLS); carryOn == false {
