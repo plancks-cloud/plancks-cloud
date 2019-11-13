@@ -1,6 +1,6 @@
 
 # Build a Go app build container
-FROM golang:1.12.4-alpine3.9 as prebuilder
+FROM golang:1.13.4-alpine3.10 as prebuilder
 RUN mkdir /user && \
     echo 'nobody:x:65534:65534:nobody:/:' > /user/passwd && \
     echo 'nobody:x:65534:' > /user/group

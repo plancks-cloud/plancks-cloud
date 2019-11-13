@@ -146,7 +146,7 @@ func newReverseProxyHandler(routes model.Routes, m map[string]*httputil.ReverseP
 		if carryOn := handleWS(w, r, routes); carryOn == false {
 			return //handled by handleWS; nothing else to do
 		}
-		if carryOn := handleByReverseProxy(w, r, m); carryOn == false {
+		if carryOn := handleByReverseProxy(w, r, m, fromTLS); carryOn == false {
 			return //Handled by reverse proxy; nothing else to do
 		}
 		logrus.Errorln("Could not handle: ", r.URL.String(), "among", len(m))
@@ -156,9 +156,12 @@ func newReverseProxyHandler(routes model.Routes, m map[string]*httputil.ReverseP
 	})
 }
 
-func handleByReverseProxy(w http.ResponseWriter, r *http.Request, m map[string]*httputil.ReverseProxy) (carryOn bool) {
+func handleByReverseProxy(w http.ResponseWriter, r *http.Request, m map[string]*httputil.ReverseProxy, fromTLS bool) (carryOn bool) {
 	rp, ok := m[util.HostOfURL(r.Host)]
 	if ok {
+		if fromTLS {
+			r.Header.Add("X-Forwarded-Proto", "https")
+		}
 		rp.ServeHTTP(w, r)
 		return false
 	}
